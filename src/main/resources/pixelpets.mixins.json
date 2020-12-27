@@ -4,7 +4,8 @@
   "package": "me.steven.pixelpets.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinLivingEntity"
+    "MixinLivingEntity",
+    "MixinPlayerInventory"
   ],
   "client": [
   ],
