@@ -1,0 +1,30 @@
+{
+  "id": "pixelpets:chicken",
+  "color": "0xe8b14a",
+  "abilities": [
+    {
+      "pos": 0,
+      "id": "pixelpets:saturation_240ticks"
+    },
+    {
+      "pos": 1,
+      "id": "pixelpets:drop_feather"
+    },
+    {
+      "pos": 2,
+      "id": "pixelpets:regen_8health"
+    },
+    {
+      "pos": 3,
+      "id": "pixelpets:prey"
+    },
+    {
+      "pos": 4,
+      "id": "pixelpets:slow_falling"
+    },
+    {
+      "pos": 5,
+      "id": "pixelpets:extra_4hearts"
+    }
+  ]
+}
