@@ -5,6 +5,10 @@
     {
       "pos": 0,
       "id": "pixelpets:scarecreepers"
+    },
+    {
+      "pos": 1,
+      "id": "pixelpets:speed_300ticks"
     }
   ]
 }

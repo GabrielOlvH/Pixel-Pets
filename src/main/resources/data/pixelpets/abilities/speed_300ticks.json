@@ -1,0 +1,12 @@
+{
+  "id": "pixelpets:speed_300ticks",
+  "cooldown": 1200,
+  "rarity": "UNUSUAL",
+  "interact": {
+    "effect": {
+      "id": "minecraft:speed",
+      "duration": 300,
+      "amplifier": 1
+    }
+  }
+}
