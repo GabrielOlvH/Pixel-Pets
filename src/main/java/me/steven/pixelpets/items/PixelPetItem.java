@@ -7,6 +7,7 @@ import me.steven.pixelpets.abilities.AbilityRarity;
 import me.steven.pixelpets.pets.Age;
 import me.steven.pixelpets.pets.PixelPet;
 import me.steven.pixelpets.player.PixelPetsPlayerExtension;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
@@ -15,9 +16,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class PixelPetItem extends Item implements DurabilityBarItem {
 
@@ -37,22 +38,39 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         PetData data = PetData.fromTag(stack.getOrCreateTag());
         if (data != null) {
-            tooltip.add(new LiteralText("Nickname: " + data.getNickname()));
-            tooltip.add(new LiteralText("Age: " + data.getAge() + " (Grows in " + data.getTicksUntilGrow() + " ticks)"));
-            tooltip.add(new LiteralText("Abilities: "));
-            data.getAbilities().forEach((id) -> tooltip.add(new LiteralText("    ").append(new TranslatableText(Abilities.REGISTRY.get(id).getTranslationKey()))));
             tooltip.add(LiteralText.EMPTY);
-            Ability selected = Abilities.REGISTRY.get(data.getSelected());
-            if (selected != null)
-                tooltip.add(new LiteralText("Selected: ").append(new TranslatableText(selected.getTranslationKey())));
-            tooltip.add(new LiteralText("Cooldown: " + data.getCooldown()));
+            if (data.getAbilities().isEmpty()) {
+                tooltip.add(new TranslatableText("item.pixelpets.pet.noabilities", getName(stack)));
+            } else {
+                tooltip.add(new TranslatableText("item.pixelpets.pet.abilities").formatted(Formatting.AQUA));
+                data.getAbilities().forEach((id) -> {
+                    Ability ability = Abilities.REGISTRY.get(id);
+                    if (ability == null) return;
+                    MutableText text = new TranslatableText(ability.getTranslationKey());
+                    if (data.getSelected() != null && data.getSelected().equals(id))
+                        text = new LiteralText(" [*] ").append(text);
+                    else
+                        text = new LiteralText(" [ ] ").append(text);
+                    tooltip.add(text);
+                    if (Screen.hasShiftDown()) {
+                        tooltip.add(new LiteralText("     ").append(new TranslatableText(ability.getTranslationKey() + ".description")).formatted(Formatting.ITALIC, Formatting.GRAY));
+                    }
+                });
+            }
+            if (data.getCooldown() > 0) {
+                tooltip.add(LiteralText.EMPTY);
+                tooltip.add(new TranslatableText("item.pixelpets.pet.cooldown", data.getCooldown()).formatted(Formatting.GRAY, Formatting.ITALIC));
+            }
         }
     }
 
     @Override
     public Text getName(ItemStack stack) {
         PetData petData = PetData.fromTag(stack.getOrCreateTag());
-        return petData != null ? new LiteralText(petData.getNickname()) : super.getName(stack);
+        if (petData == null) return super.getName(stack);
+        int color = petData.getPet().getCooldownDisplayColor();
+        MutableText ageText = new LiteralText(" [").append(new TranslatableText("item.pixelpets.pet.age." + petData.getAge().toString().toLowerCase(Locale.ROOT))).append(new LiteralText("]"));
+        return new LiteralText(petData.getNickname()).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color))).append(ageText.formatted(Formatting.DARK_GRAY));
     }
 
     @Nullable
@@ -87,7 +105,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             Ability next = next(stack);
             //TODO use translatable text
             if (next != null)
-                user.sendMessage(new LiteralText("Selected ability ").append(new TranslatableText(next.getTranslationKey())), false);
+                user.sendMessage(getName(stack).shallowCopy().append(new LiteralText(" selected ability ").formatted(Formatting.WHITE)).append(new TranslatableText(next.getTranslationKey())), false);
         } else if (data.getCooldown() <= 0) {
             Ability ability = getSelected(stack);
             if (ability != null && ability.onInteract(stack, world, user)) {
@@ -166,7 +184,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     @Override
     public boolean hasDurabilityBar(ItemStack itemStack) {
         PetData data = PetData.fromTag(itemStack.getOrCreateTag());
-        return data != null && data.getCooldown() > 0;
+        return data != null && data.getCooldown() > 0 &&  Abilities.REGISTRY.containsKey(data.getSelected());
     }
 
     @Override
