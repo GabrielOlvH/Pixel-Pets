@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "me.steven.pixelpets.PixelPetsMod"
+    ],
+    "rei_plugins_v0": [
+        "me.steven.pixelpets.compat.REIPlugin"
     ]
   },
   "mixins": [

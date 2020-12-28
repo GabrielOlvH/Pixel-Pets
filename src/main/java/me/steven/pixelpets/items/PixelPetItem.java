@@ -151,7 +151,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         }
     }
 
-    private void initialize(PetData data) {
+    public static void initialize(PetData data) {
         data.setNickname(I18n.translate(data.getPet().getTranslationKey()));
         data.setAge(Age.BABY);
         data.setTicksUntilGrow(1200);
@@ -171,6 +171,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
 
     @Override
     public int getDurabilityBarColor(ItemStack stack) {
-        return PetData.fromTag(stack.getOrCreateSubTag("PetData")).getPet().getCooldownDisplayColor();
+        PetData data = PetData.fromTag(stack.getOrCreateSubTag("PetData"));
+        return data.getPet().getCooldownDisplayColor();
     }
 }

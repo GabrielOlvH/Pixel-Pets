@@ -98,6 +98,7 @@ public class PetData {
 
     @Nullable
     public static PetData fromTag(CompoundTag parent) {
+        if (!parent.contains("PetData")) return null;
         PetData data = new PetData();
         CompoundTag tag = parent.getCompound("PetData");
         if (!tag.contains("PetId")) {
