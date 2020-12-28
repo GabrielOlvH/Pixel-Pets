@@ -8,7 +8,7 @@
     },
     {
       "pos": 1,
-      "id": "pixelpets:regen8health"
+      "id": "pixelpets:regen_8health"
     },
     {
       "pos": 2,
@@ -16,7 +16,7 @@
     },
     {
       "pos": 3,
-      "id": "pixelpets:extrahearts"
+      "id": "pixelpets:extra_4hearts"
     }
   ]
 }

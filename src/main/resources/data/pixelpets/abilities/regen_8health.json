@@ -1,5 +1,5 @@
 {
-  "id": "pixelpets:regen8health",
+  "id": "pixelpets:regen_8health",
   "cooldown": 1200,
   "rarity": "UNUSUAL",
   "interact": {
