@@ -3,6 +3,7 @@ package me.steven.pixelpets.abilities;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import me.steven.pixelpets.utils.AbilitySupplier;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -23,6 +24,7 @@ public interface Ability {
     int getCooldown();
     @Nullable
     Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers();
+    boolean repels(EntityType<?> type);
 
     default String getTranslationKey() {
         return "ability." + getId().getNamespace() + "." + getId().getPath();
@@ -96,6 +98,11 @@ public interface Ability {
                 @Override
                 public @Nullable Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers() {
                     return attributes.get();
+                }
+
+                @Override
+                public boolean repels(EntityType<?> type) {
+                    return false;
                 }
             };
             Abilities.REGISTRY.put(ability.getId(), ability);

@@ -8,6 +8,7 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.unimi.dsi.fastutil.Function;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -22,7 +23,7 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.registry.Registry;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
@@ -112,6 +113,25 @@ public class AbilityParser {
             return Optional.of(() -> ThreadLocalRandom.current().nextInt(max - min) + min);
         }
         return Optional.empty();
+    }
+
+    public static Optional<Function<EntityType<?>, Boolean>> parseEntityType(JsonElement object) {
+        if (object == null) return Optional.empty();
+        else if (object.isJsonArray()) {
+            Set<Identifier> types = new HashSet<>();
+            object.getAsJsonArray().forEach((e) -> {
+                Identifier id = new Identifier(e.getAsString());
+                Optional<EntityType<?>> optional = Registry.ENTITY_TYPE.getOrEmpty(id);
+                if (!optional.isPresent()) throw new NullPointerException("Expected entity type but received unknown string '" + e.getAsString() + "'.");
+                types.add(id);
+            });
+            return Optional.of((t) -> types.contains(Registry.ENTITY_TYPE.getId((EntityType<?>) t)));
+        } else {
+            Identifier id = new Identifier(object.getAsString());
+            Optional<EntityType<?>> optional = Registry.ENTITY_TYPE.getOrEmpty(id);
+            if (!optional.isPresent()) throw new NullPointerException("Expected entity type but received unknown string '" + object.getAsString() + "'.");
+            return Optional.of((t) -> t == optional.get());
+        }
     }
 
     public static Optional<Supplier<ItemStack>> parseStackProvider(JsonObject object) {

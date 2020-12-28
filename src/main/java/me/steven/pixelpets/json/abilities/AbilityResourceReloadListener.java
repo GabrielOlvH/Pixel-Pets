@@ -3,6 +3,7 @@ package me.steven.pixelpets.json.abilities;
 import com.google.common.collect.Multimap;
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
+import it.unimi.dsi.fastutil.Function;
 import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
@@ -12,6 +13,7 @@ import me.steven.pixelpets.json.abilities.AbilitySupplierParser;
 import me.steven.pixelpets.json.abilities.EntityAttributeParser;
 import me.steven.pixelpets.utils.AbilitySupplier;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -56,6 +58,7 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
                 Optional<AbilitySupplier> tick = AbilitySupplierParser.parse(result.has("tick") ? result.get("tick").getAsJsonObject() : null);
                 Optional<AbilitySupplier> interact = AbilitySupplierParser.parse(result.has("interact") ? result.get("interact").getAsJsonObject() : null);
                 Multimap<EntityAttribute, EntityAttributeModifier> attributes = EntityAttributeParser.parse(result.get("attributes"));
+                Optional<Function<EntityType<?>, Boolean>> repels = AbilityParser.parseEntityType(result.get("repels"));
                 Ability ability = new Ability() {
                     @Override
                     public Identifier getId() {
@@ -85,6 +88,11 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
                     @Override
                     public @Nullable Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers() {
                         return attributes;
+                    }
+
+                    @Override
+                    public boolean repels(EntityType<?> type) {
+                        return repels.isPresent() && repels.get().apply(type);
                     }
                 };
                 Abilities.REGISTRY.put(id, ability);

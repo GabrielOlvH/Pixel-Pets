@@ -1,0 +1,6 @@
+{
+  "id": "pixelpets:scarecreepers",
+  "cooldown": 0,
+  "rarity": "UNUSUAL",
+  "repels": "minecraft:creeper"
+}

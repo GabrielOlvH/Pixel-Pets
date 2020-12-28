@@ -1,0 +1,10 @@
+{
+  "id": "pixelpets:cat",
+  "color": "0xe8b14a",
+  "abilities": [
+    {
+      "pos": 0,
+      "id": "pixelpets:scarecreepers"
+    }
+  ]
+}
