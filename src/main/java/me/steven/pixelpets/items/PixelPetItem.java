@@ -10,6 +10,7 @@ import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,15 +29,8 @@ import java.util.List;
 
 public class PixelPetItem extends Item implements DurabilityBarItem {
 
-    private final PixelPet pet;
-
-    public PixelPetItem(PixelPet pet, Settings settings) {
+    public PixelPetItem(Settings settings) {
         super(settings);
-        this.pet = pet;
-    }
-
-    public PixelPet getPet() {
-        return pet;
     }
 
     @Override
@@ -96,7 +90,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
                 user.sendMessage(new LiteralText("Selected ability ").append(new TranslatableText(next.getTranslationKey())), false);
         } else if (data.getCooldown() <= 0) {
             Ability ability = getSelected(stack);
-            if (ability != null && ability.onInteract(user)) {
+            if (ability != null && ability.onInteract(stack, world, user)) {
                 data.setCooldown(ability.getCooldown());
                 stack.putSubTag("PetData", data.toTag());
             }
@@ -123,7 +117,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
 
         if (data.getAge() == Age.CHILD && world.random.nextDouble() > 0.97) {
             PetData finalData = data;
-            Ability[] unusual = Arrays.stream(pet.getAbilities()).filter(ability -> ability.getRarity() == AbilityRarity.UNUSUAL && !finalData.getAbilities().contains(ability.getId())).toArray(Ability[]::new);
+            Ability[] unusual = Arrays.stream(data.getPet().getAbilities()).filter(ability -> ability.getRarity() == AbilityRarity.UNUSUAL && !finalData.getAbilities().contains(ability.getId())).toArray(Ability[]::new);
             if (unusual.length > 0) {
                 int toLearn = world.random.nextInt(unusual.length);
                 data.addAbility(unusual[toLearn]);
@@ -135,9 +129,9 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             Ability ability = getSelected(stack);
             if (ability != null) {
                 if (entity instanceof PixelPetsPlayerExtension) {
-                    ((PixelPetsPlayerExtension) entity).getInventoryPets().put(pet, data);
+                    ((PixelPetsPlayerExtension) entity).getInventoryPets().put(data.getPet(), data);
                 }
-                if (ability.inventoryTick(stack, world, entity, slot, selected)) {
+                if (ability.inventoryTick(stack, world, (LivingEntity) entity)) {
                     data.setCooldown(ability.getCooldown());
                     stack.putSubTag("PetData", data.toTag());
                 }
@@ -152,13 +146,13 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         data.setAge(Age.values()[data.getAge().ordinal() + 1]);
         data.setTicksUntilGrow(1200);
         if (data.getAge() == Age.CHILD) {
-            data.addAbility(pet.getStandard());
-            data.setSelected(pet.getStandard().getId());
+            data.addAbility(data.getPet().getStandard());
+            data.setSelected(data.getPet().getStandard().getId());
         }
     }
 
     private void initialize(PetData data) {
-        data.setNickname(I18n.translate(pet.getTranslationKey()));
+        data.setNickname(I18n.translate(data.getPet().getTranslationKey()));
         data.setAge(Age.BABY);
         data.setTicksUntilGrow(1200);
     }
@@ -177,6 +171,6 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
 
     @Override
     public int getDurabilityBarColor(ItemStack stack) {
-        return pet.getCooldownDisplayColor();
+        return PetData.fromTag(stack.getOrCreateSubTag("PetData")).getPet().getCooldownDisplayColor();
     }
 }

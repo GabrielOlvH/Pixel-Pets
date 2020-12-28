@@ -1,0 +1,17 @@
+{
+  "id": "pixelpets:prey",
+  "cooldown": 1200,
+  "rarity": "UNUSUAL",
+  "tick": {
+    "condition": {
+      "nearHostiles": {
+        "inRadius": 6
+      }
+    },
+    "effect": {
+      "id": "minecraft:speed",
+      "duration": 240,
+      "amplifier": 1
+    }
+  }
+}

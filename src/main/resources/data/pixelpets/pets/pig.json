@@ -1,0 +1,22 @@
+{
+  "id": "pixelpets:pig",
+  "color": "0xde78be",
+  "abilities": [
+    {
+      "pos": 0,
+      "id": "pixelpets:saturation_240ticks"
+    },
+    {
+      "pos": 1,
+      "id": "pixelpets:regen8health"
+    },
+    {
+      "pos": 2,
+      "id": "pixelpets:prey"
+    },
+    {
+      "pos": 3,
+      "id": "pixelpets:extrahearts"
+    }
+  ]
+}

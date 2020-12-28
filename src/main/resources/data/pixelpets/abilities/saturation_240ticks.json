@@ -1,0 +1,12 @@
+{
+  "id": "pixelpets:saturation_240ticks",
+  "cooldown": 1200,
+  "rarity": "COMMON",
+  "interact": {
+    "effect": {
+      "id": "minecraft:saturation",
+      "duration": 240,
+      "amplifier": 0
+    }
+  }
+}

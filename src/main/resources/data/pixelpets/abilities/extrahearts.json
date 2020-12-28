@@ -1,0 +1,11 @@
+{
+  "id": "pixelpets:extrahearts",
+  "cooldown": 1200,
+  "rarity": "COMMON",
+  "attributes": {
+    "id": "minecraft:generic.max_health",
+    "name": "Pig extra hearts",
+    "value": 8,
+    "operation": "ADDITION"
+  }
+}

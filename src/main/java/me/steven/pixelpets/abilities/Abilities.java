@@ -19,10 +19,10 @@ public class Abilities {
 
     public static final HashBiMap<Identifier, Ability> REGISTRY = HashBiMap.create();
 
-    public static final Ability SATURATION = new Ability.Builder(AbilityRarity.COMMON)
+    /*public static final Ability SATURATION = new Ability.Builder(AbilityRarity.COMMON)
             .setId(new Identifier(PixelPetsMod.MOD_ID, "saturation"))
-            .onInteract((player) -> {
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 120, 0));
+            .onInteract((stack, world, entity) -> {
+                entity.addStatusEffect(new StatusEffectInstance(StatusEffects.SATURATION, 120, 0));
                 return true;
             })
             .setCooldown(200)
@@ -30,11 +30,11 @@ public class Abilities {
 
     public static final Ability PREY = new Ability.Builder(AbilityRarity.UNUSUAL)
             .setId(new Identifier(PixelPetsMod.MOD_ID, "prey"))
-            .onInventoryTick((stack, world, entity, slot, selected) -> {
+            .onInventoryTick((stack, world, entity) -> {
                 if (entity instanceof PlayerEntity) {
                     boolean empty = entity.world.getEntitiesByClass(HostileEntity.class, new Box(entity.getBlockPos()).expand(6), (e) -> true).isEmpty();
                     if (!empty) {
-                        ((PlayerEntity) entity).addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 240, 2));
+                        entity.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 240, 2));
                         return true;
                     }
                 }
@@ -45,8 +45,8 @@ public class Abilities {
 
     public static final Ability INSTA_REGEN = new Ability.Builder(AbilityRarity.UNUSUAL)
             .setId(new Identifier(PixelPetsMod.MOD_ID, "instaregen"))
-            .onInteract((player) -> {
-                player.heal(8f);
+            .onInteract((stack, world, entity) -> {
+                entity.heal(8f);
                 return true;
             })
             .setCooldown(200)
@@ -66,5 +66,5 @@ public class Abilities {
                 );
                 return builder.build();
             })
-            .build();
+            .build();*/
 }

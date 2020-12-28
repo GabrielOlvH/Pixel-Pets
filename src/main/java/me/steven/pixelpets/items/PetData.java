@@ -2,6 +2,8 @@ package me.steven.pixelpets.items;
 
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.pets.Age;
+import me.steven.pixelpets.pets.PixelPet;
+import me.steven.pixelpets.pets.PixelPets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PetData {
+    private Identifier petId;
     private String nickname;
     private Age age;
     private List<Identifier> abilities = new ArrayList<>();
@@ -19,6 +22,10 @@ public class PetData {
     private Identifier selected;
     private int cooldown;
     private int ticksUntilGrow;
+
+    public Identifier getPetId() {
+        return petId;
+    }
 
     public String getNickname() {
         return nickname;
@@ -69,8 +76,14 @@ public class PetData {
         this.ticksUntilGrow = ticksUntilGrow;
     }
 
+    public PixelPet getPet() {
+        if (petId == null) petId = new Identifier("pixelpets:pig");
+        return PixelPets.REGISTRY.get(petId);
+    }
+
     public CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
+        tag.putString("PetId", petId.toString());
         tag.putString("Nickname", nickname);
         tag.putInt("Age", age.ordinal());
         tag.putInt("TicksUntilGrow", ticksUntilGrow);
@@ -86,8 +99,11 @@ public class PetData {
     @Nullable
     public static PetData fromTag(CompoundTag parent) {
         PetData data = new PetData();
-        if (!parent.contains("PetData")) return null;
         CompoundTag tag = parent.getCompound("PetData");
+        if (!tag.contains("PetId")) {
+            tag.putString("PetId", "pixelpets:pig");
+        }
+        data.petId = new Identifier(tag.getString("PetId"));
         data.nickname = tag.getString("Nickname");
         data.age = Age.values()[tag.getInt("Age")];
         data.ticksUntilGrow = tag.getInt("TicksUntilGrow");

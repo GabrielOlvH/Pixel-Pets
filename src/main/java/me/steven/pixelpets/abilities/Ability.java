@@ -2,26 +2,24 @@ package me.steven.pixelpets.abilities;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import me.steven.pixelpets.utils.InventoryTick;
-import net.minecraft.entity.Entity;
+import me.steven.pixelpets.utils.AbilitySupplier;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface Ability {
 
     Identifier getId();
     AbilityRarity getRarity();
-    boolean onInteract(PlayerEntity playerEntity);
-    boolean inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected);
+    boolean onInteract(ItemStack stack, World world, LivingEntity entity);
+    boolean inventoryTick(ItemStack stack, World world, LivingEntity entity);
     int getCooldown();
     @Nullable
     Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers();
@@ -33,8 +31,8 @@ public interface Ability {
     class Builder {
         private Identifier id;
         private final AbilityRarity rarity;
-        private Function<PlayerEntity, Boolean> interact = (user) -> false;
-        private InventoryTick inventoryTick = (stack, world, entity, slot, selected) ->  false;
+        private AbilitySupplier interact = (stack, world, entity) ->  false;
+        private AbilitySupplier abilitySupplier = (stack, world, entity) ->  false;
         private Supplier<Multimap<EntityAttribute, EntityAttributeModifier>> attributes = ImmutableMultimap::of;
         private int cooldown;
 
@@ -47,13 +45,13 @@ public interface Ability {
             return this;
         }
 
-        public Builder onInteract(Function<PlayerEntity, Boolean> interact) {
+        public Builder onInteract(AbilitySupplier interact) {
             this.interact = interact;
             return this;
         }
 
-        public Builder onInventoryTick(InventoryTick inventoryTick) {
-            this.inventoryTick = inventoryTick;
+        public Builder onInventoryTick(AbilitySupplier abilitySupplier) {
+            this.abilitySupplier = abilitySupplier;
             return this;
         }
 
@@ -81,13 +79,13 @@ public interface Ability {
                 }
 
                 @Override
-                public boolean onInteract(PlayerEntity playerEntity) {
-                    return interact.apply(playerEntity);
+                public boolean onInteract(ItemStack stack, World world, LivingEntity entity) {
+                    return interact.test(stack, world, entity);
                 }
 
                 @Override
-                public boolean inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-                    return inventoryTick.inventoryTick(stack, world, entity, slot, selected);
+                public boolean inventoryTick(ItemStack stack, World world, LivingEntity entity) {
+                    return abilitySupplier.test(stack, world, entity);
                 }
 
                 @Override
