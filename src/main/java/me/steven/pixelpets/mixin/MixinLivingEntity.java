@@ -1,5 +1,6 @@
 package me.steven.pixelpets.mixin;
 
+import com.google.common.collect.Multimap;
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.items.PetData;
@@ -8,6 +9,8 @@ import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +35,9 @@ public abstract class MixinLivingEntity implements PixelPetsPlayerExtension {
         pixelPets_pets.forEach((pet, data) -> {
             Ability ability = Abilities.REGISTRY.get(data.getSelected());
             if (!pixelPets_appliedPets.containsKey(pet) && ability != null) {
-                getAttributes().addTemporaryModifiers(ability.getEntityAttributeModifiers());
+                Multimap<EntityAttribute, EntityAttributeModifier> attributes = ability.getEntityAttributeModifiers();
+                if (attributes != null)
+                    getAttributes().addTemporaryModifiers(attributes);
                 pixelPets_appliedPets.put(pet, data);
             }
         });
@@ -43,7 +48,9 @@ public abstract class MixinLivingEntity implements PixelPetsPlayerExtension {
 
             Ability ability = Abilities.REGISTRY.get(data.getSelected());
             if (!pixelPets_pets.containsKey(pet) && ability != null) {
-                getAttributes().removeModifiers(ability.getEntityAttributeModifiers());
+                Multimap<EntityAttribute, EntityAttributeModifier> attributes = ability.getEntityAttributeModifiers();
+                if (attributes != null)
+                    getAttributes().removeModifiers(attributes);
                 return true;
             }
             return false;
