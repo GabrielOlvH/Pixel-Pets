@@ -6,6 +6,9 @@ import me.steven.pixelpets.utils.AbilitySupplier;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ItemScatterer;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -32,6 +35,18 @@ public class AbilitySupplierParser {
                 return Optional.of((stack, world, entity) -> {
                     if (!condition.isPresent() || condition.get().apply(entity)) {
                         entity.heal(heal.get().get());
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        }
+        if (object.has("give")) {
+            Optional<Supplier<ItemStack>> give = AbilityParser.parseStackProvider(object.get("give").getAsJsonObject());
+            if (give.isPresent()) {
+                return Optional.of((stack, world, entity) -> {
+                    if ((!condition.isPresent() || condition.get().apply(entity))) {
+                        ItemScatterer.spawn(world, entity.getX(), entity.getY(), entity.getZ(), give.get().get());
                         return true;
                     }
                     return false;

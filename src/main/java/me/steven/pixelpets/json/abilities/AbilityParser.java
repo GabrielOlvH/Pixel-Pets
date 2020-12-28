@@ -3,6 +3,7 @@ package me.steven.pixelpets.json.abilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.unimi.dsi.fastutil.Function;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
@@ -13,6 +14,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
@@ -100,7 +103,8 @@ public class AbilityParser {
     }
 
     public static Optional<Supplier<Integer>> parseIntProvider(JsonElement element) {
-        if (element.isJsonPrimitive()) return Optional.of(element::getAsInt);
+        if (element == null) return Optional.empty();
+        else if (element.isJsonPrimitive()) return Optional.of(element::getAsInt);
         else if (element.isJsonObject()) {
             JsonObject object = element.getAsJsonObject();
             int min = JsonHelper.getInt(object, "min", Integer.MIN_VALUE);
@@ -108,6 +112,30 @@ public class AbilityParser {
             return Optional.of(() -> ThreadLocalRandom.current().nextInt(max - min) + min);
         }
         return Optional.empty();
+    }
+
+    public static Optional<Supplier<ItemStack>> parseStackProvider(JsonObject object) {
+        Identifier id = new Identifier(object.get("id").getAsString());
+        Item item = Registry.ITEM.get(id);
+        Optional<Supplier<Integer>> countProvider = parseIntProvider(object.get("count"));
+        int count = countProvider.orElse(() -> 1).get();
+        CompoundTag nbt = new CompoundTag();
+        if (object.has("nbt")) {
+            object.getAsJsonObject("nbt").entrySet().forEach(e -> {
+                JsonPrimitive value = e.getValue().getAsJsonPrimitive();
+                if (value.isNumber())
+                    nbt.putInt(e.getKey(), value.getAsInt());
+                else if (value.isString())
+                    nbt.putString(e.getKey(), value.getAsString());
+                else if (value.isBoolean())
+                    nbt.putBoolean(e.getKey(), value.getAsBoolean());
+            });
+        }
+        return Optional.of(() -> {
+            ItemStack itemStack = new ItemStack(item, count);
+            if (!nbt.isEmpty()) itemStack.setTag(nbt);
+            return itemStack;
+        });
     }
 
     public static Optional<Function<Integer, Boolean>> parseIntCondition(JsonElement element) {

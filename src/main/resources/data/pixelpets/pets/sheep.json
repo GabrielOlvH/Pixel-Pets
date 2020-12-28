@@ -1,0 +1,26 @@
+{
+  "id": "pixelpets:cow",
+  "color": "0x400e0e",
+  "abilities": [
+    {
+      "pos": 0,
+      "id": "pixelpets:saturation_240ticks"
+    },
+    {
+      "pos": 1,
+      "id": "pixelpets:regen8health"
+    },
+    {
+      "pos": 2,
+      "id": "pixelpets:prey"
+    },
+    {
+      "pos": 3,
+      "id": "pixelpets:drop_wool"
+    },
+    {
+      "pos": 4,
+      "id": "pixelpets:extrahearts"
+    }
+  ]
+}
