@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 public class PixelPet {
     private final Identifier id;
     private final String translationKey;
-    private final Ability standard;
     private final Ability[] abilities;
     private final int cooldownDisplayColor;
 
@@ -17,7 +16,6 @@ public class PixelPet {
         this.id = id;
         this.cooldownDisplayColor = cooldownDisplayColor;
         this.translationKey = "pet." + id.getNamespace() + "." + id.getPath();
-        this.standard = abilities[0];
         this.abilities = abilities;
     }
 
@@ -27,10 +25,6 @@ public class PixelPet {
 
     public String getTranslationKey() {
         return translationKey;
-    }
-
-    public Ability getStandard() {
-        return standard;
     }
 
     public Ability[] getAbilities() {

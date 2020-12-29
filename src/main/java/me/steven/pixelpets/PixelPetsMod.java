@@ -16,7 +16,7 @@ public class PixelPetsMod implements ModInitializer  {
     public static final String MOD_ID = "pixelpets";
 
     public static final Item PET_ITEM =
-            Registry.register(Registry.ITEM, new Identifier(MOD_ID, "pet"), new PixelPetItem(new Item.Settings()));
+            Registry.register(Registry.ITEM, new Identifier(MOD_ID, "pet"), new PixelPetItem(new Item.Settings().maxCount(1)));
 
     @Override
     public void onInitialize() {

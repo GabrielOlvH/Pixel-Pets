@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PixelPetItem extends Item implements DurabilityBarItem {
 
@@ -164,8 +165,12 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         data.setAge(Age.values()[data.getAge().ordinal() + 1]);
         data.setTicksUntilGrow(1200);
         if (data.getAge() == Age.CHILD) {
-            data.addAbility(data.getPet().getStandard());
-            data.setSelected(data.getPet().getStandard().getId());
+            Ability[] initials = Arrays.stream(data.getPet().getAbilities()).filter(ability -> ability.getRarity() == AbilityRarity.COMMON).toArray(Ability[]::new);
+            if (initials.length > 0) {
+                Ability initial = initials[ThreadLocalRandom.current().nextInt(initials.length)];
+                data.addAbility(initial);
+                data.setSelected(initial.getId());
+            }
         }
     }
 
