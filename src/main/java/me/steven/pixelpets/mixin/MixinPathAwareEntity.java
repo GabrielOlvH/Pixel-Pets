@@ -1,6 +1,7 @@
 package me.steven.pixelpets.mixin;
 
 import me.steven.pixelpets.abilities.Abilities;
+import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.items.PetData;
 import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.entity.EntityType;
@@ -18,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Set;
+
 @Mixin(PathAwareEntity.class)
 public class MixinPathAwareEntity extends MobEntity {
     protected MixinPathAwareEntity(EntityType<? extends MobEntity> entityType, World world) {
@@ -28,8 +31,10 @@ public class MixinPathAwareEntity extends MobEntity {
     private void f(EntityType<? extends MobEntity> entityType, World world, CallbackInfo ci) {
         if (world != null && !world.isClient()) {
             goalSelector.add(3, new FleeEntityGoal<>((PathAwareEntity) (Object) this, PlayerEntity.class, (p) -> {
-                for (PetData data : ((PixelPetsPlayerExtension) p).getInventoryPets().values()) {
-                    if (Abilities.REGISTRY.get(data.getSelected()).repels(entityType)) return true;
+                for (Set<Ability> abilities : ((PixelPetsPlayerExtension) p).getInventoryPets().values()) {
+                    for (Ability ability : abilities) {
+                        if (ability.repels(entityType)) return true;
+                    }
                 }
                 return false;
             }, 4.0F, 1.0D, 1.2D, EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR::test));

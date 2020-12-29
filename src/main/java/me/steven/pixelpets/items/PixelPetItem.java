@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
@@ -148,7 +149,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             Ability ability = getSelected(stack);
             if (ability != null) {
                 if (entity instanceof PixelPetsPlayerExtension) {
-                    ((PixelPetsPlayerExtension) entity).getInventoryPets().put(data.getPet(), data);
+                    ((PixelPetsPlayerExtension) entity).getInventoryPets().computeIfAbsent(data.getPet(), (a) -> new HashSet<>()).add(ability);
                 }
                 if (ability.inventoryTick(stack, world, (LivingEntity) entity)) {
                     data.setCooldown(ability.getCooldown());
