@@ -24,14 +24,17 @@ public class REIPlugin implements REIPluginV0 {
     public void registerEntries(EntryRegistry entryRegistry) {
         entryRegistry.removeEntry(EntryStack.create(new ItemStack(PixelPetsMod.PET_ITEM)));
         PixelPets.REGISTRY.forEach((id, pet) -> {
-            ItemStack stack = new ItemStack(PixelPetsMod.PET_ITEM);
-            CompoundTag tag = new CompoundTag();
-            tag.putString("PetId", id.toString());
-            stack.putSubTag("PetData", tag);
-            PetData data = PetData.fromTag(stack.getOrCreateTag());
-            PixelPetItem.initialize(data);
-            stack.putSubTag("PetData", data.toTag());
-            entryRegistry.registerEntries(EntryStack.create(stack));
+            for (int i = 0; i < 3; i++) {
+                ItemStack stack = new ItemStack(PixelPetsMod.PET_ITEM);
+                CompoundTag tag = new CompoundTag();
+                tag.putString("PetId", id.toString());
+                stack.putSubTag("PetData", tag);
+                PetData data = PetData.fromTag(stack.getOrCreateTag());
+                PixelPetItem.initialize(data);
+                data.setVariant(i);
+                stack.putSubTag("PetData", data.toTag());
+                entryRegistry.registerEntries(EntryStack.create(stack));
+            }
         });
     }
 }

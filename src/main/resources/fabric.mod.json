@@ -20,6 +20,9 @@
     "main": [
       "me.steven.pixelpets.PixelPetsMod"
     ],
+    "client": [
+      "me.steven.pixelpets.PixelPetsModClient"
+    ],
     "rei_plugins_v0": [
         "me.steven.pixelpets.compat.REIPlugin"
     ]

@@ -179,6 +179,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         data.setNickname(I18n.translate(data.getPet().getTranslationKey()));
         data.setAge(Age.BABY);
         data.setTicksUntilGrow(1200);
+        data.setVariant(ThreadLocalRandom.current().nextInt(3));
     }
 
     @Override

@@ -22,6 +22,7 @@ public class PetData {
     private Identifier selected;
     private int cooldown;
     private int ticksUntilGrow;
+    private int variant;
 
     public Identifier getPetId() {
         return petId;
@@ -76,6 +77,14 @@ public class PetData {
         this.ticksUntilGrow = ticksUntilGrow;
     }
 
+    public int getVariant() {
+        return variant;
+    }
+
+    public void setVariant(int variant) {
+        this.variant = variant;
+    }
+
     public PixelPet getPet() {
         if (petId == null) petId = new Identifier("pixelpets:pig");
         return PixelPets.REGISTRY.get(petId);
@@ -93,6 +102,7 @@ public class PetData {
         if (selected != null)
             tag.putString("Selected", selected.toString());
         tag.putInt("Cooldown", cooldown);
+        tag.putInt("Variant", variant);
         return tag;
     }
 
@@ -113,6 +123,7 @@ public class PetData {
         if (tag.contains("Selected"))
             data.selected = new Identifier(tag.getString("Selected"));
         data.cooldown = tag.getInt("Cooldown");
+        data.variant = tag.getInt("Variant");
         return data;
     }
 }
