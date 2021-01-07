@@ -8,10 +8,6 @@
     "MixinPathAwareEntity",
     "MixinPlayerInventory"
   ],
-  "client": [
-    "MixinBakedModelManager",
-    "AccessorModelLoader"
-  ],
   "injectors": {
     "defaultRequire": 1
   }
