@@ -18,11 +18,11 @@ public class AbilitySupplierParser {
         if (object == null) return Optional.empty();
         Optional<Function<Entity, Boolean>> condition = object.has("condition") ? AbilityParser.parseEntityCondition(object.getAsJsonObject("condition")) : Optional.empty();
         if (object.has("effect")) {
-            Optional<StatusEffectInstance> statusOptional = AbilityParser.parseStatusEffect(object.getAsJsonObject("effect"));
+            Optional<Supplier<StatusEffectInstance>> statusOptional = AbilityParser.parseStatusEffect(object.getAsJsonObject("effect"));
             if (statusOptional.isPresent()) {
                 return Optional.of((stack, world, entity) -> {
                     if (!condition.isPresent() || condition.get().apply(entity)) {
-                        entity.addStatusEffect(statusOptional.get());
+                        entity.addStatusEffect(statusOptional.get().get());
                         return true;
                     }
                     return false;

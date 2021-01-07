@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
 public class AbilityParser {
-    public static Optional<StatusEffectInstance> parseStatusEffect(JsonObject object) {
+    public static Optional<Supplier<StatusEffectInstance>> parseStatusEffect(JsonObject object) {
         String id = object.get("id").getAsString();
         Optional<StatusEffect> optional = Registry.STATUS_EFFECT.getOrEmpty(new Identifier(id));
         if (!optional.isPresent())
@@ -41,7 +41,7 @@ public class AbilityParser {
         Optional<Supplier<Integer>> amplifierOptional = parseIntProvider(object.get("amplifier"));
         if (!amplifierOptional.isPresent()) throw new NullPointerException("No amplifier!");
         int amplifier = amplifierOptional.get().get();
-        return Optional.of(new StatusEffectInstance(statusEffect, duration, amplifier));
+        return Optional.of(() -> new StatusEffectInstance(statusEffect, duration, amplifier));
     }
 
     public static Optional<Function<Entity, Boolean>> parseEntityCondition(JsonObject object) {
