@@ -2,7 +2,6 @@ package me.steven.pixelpets.items;
 
 import com.mojang.datafixers.util.Pair;
 import me.steven.pixelpets.PixelPetsMod;
-import me.steven.pixelpets.pets.PixelPets;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
@@ -23,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBakedModel {
 
@@ -57,8 +55,6 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
         });
         if (model != null)
             ctx.fallbackConsumer().accept(model);
-        //if (model != null && model.equals(MinecraftClient.getInstance().getBakedModelManager().getMissingModel()))
-            //models.remove(modelId);
     }
 
     @Override
