@@ -1,4 +1,4 @@
-package me.steven.pixelpets.player;
+package me.steven.pixelpets.extensions;
 
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.items.PetData;

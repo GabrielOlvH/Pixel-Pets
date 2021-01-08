@@ -1,6 +1,6 @@
 package me.steven.pixelpets.mixin;
 
-import me.steven.pixelpets.player.PixelPetsPlayerExtension;
+import me.steven.pixelpets.extensions.PixelPetsPlayerExtension;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import org.spongepowered.asm.mixin.Final;

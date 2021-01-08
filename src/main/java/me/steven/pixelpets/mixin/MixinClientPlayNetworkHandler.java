@@ -1,6 +1,6 @@
 package me.steven.pixelpets.mixin;
 
-import me.steven.pixelpets.player.PixelPetsDataHolder;
+import me.steven.pixelpets.extensions.PixelPetsDataHolder;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;

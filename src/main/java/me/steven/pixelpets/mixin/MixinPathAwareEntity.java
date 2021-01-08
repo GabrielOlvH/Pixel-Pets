@@ -1,8 +1,8 @@
 package me.steven.pixelpets.mixin;
 
 import me.steven.pixelpets.abilities.Ability;
+import me.steven.pixelpets.extensions.PixelPetsPlayerExtension;
 import me.steven.pixelpets.items.PetData;
-import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
 import net.minecraft.entity.mob.MobEntity;

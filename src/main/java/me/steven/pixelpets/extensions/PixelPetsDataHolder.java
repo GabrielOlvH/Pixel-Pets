@@ -1,4 +1,4 @@
-package me.steven.pixelpets.player;
+package me.steven.pixelpets.extensions;
 
 import me.steven.pixelpets.items.PetData;
 import org.jetbrains.annotations.Nullable;

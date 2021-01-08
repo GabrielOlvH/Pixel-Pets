@@ -1,6 +1,6 @@
 package me.steven.pixelpets.mixin;
 
-import me.steven.pixelpets.player.PixelPetsDataHolder;
+import me.steven.pixelpets.extensions.PixelPetsDataHolder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;

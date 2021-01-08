@@ -2,8 +2,8 @@ package me.steven.pixelpets.json.abilities;
 
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.Function;
+import me.steven.pixelpets.extensions.PixelPetsDataHolder;
 import me.steven.pixelpets.items.PetData;
-import me.steven.pixelpets.player.PixelPetsDataHolder;
 import me.steven.pixelpets.utils.AbilitySupplier;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;

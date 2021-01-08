@@ -2,10 +2,10 @@ package me.steven.pixelpets.mixin;
 
 import com.google.common.collect.Multimap;
 import me.steven.pixelpets.abilities.Ability;
+import me.steven.pixelpets.extensions.PixelPetsDataHolder;
+import me.steven.pixelpets.extensions.PixelPetsPlayerExtension;
 import me.steven.pixelpets.items.PetData;
 import me.steven.pixelpets.pets.PixelPet;
-import me.steven.pixelpets.player.PixelPetsDataHolder;
-import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
