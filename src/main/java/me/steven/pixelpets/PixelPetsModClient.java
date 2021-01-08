@@ -4,7 +4,6 @@ import me.steven.pixelpets.items.PixelPetBakedModel;
 import me.steven.pixelpets.pets.PixelPets;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
@@ -14,6 +13,7 @@ public class PixelPetsModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ModelLoadingRegistry.INSTANCE.registerAppender((manager, consumer) -> {
+            consumer.accept(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"));
             Collection<Identifier> pets = manager.findResources("models/item/pets", (r) -> r.endsWith(".json"));
             for (Identifier fileId : pets) {
                 ModelIdentifier id = new ModelIdentifier(fileId.toString().replace("models/item/", "").replace(".json", ""), "inventory");

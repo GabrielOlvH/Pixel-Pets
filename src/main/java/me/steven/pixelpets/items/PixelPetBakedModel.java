@@ -90,9 +90,9 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
     @Override
     public ModelTransformation getTransformation() {
         if (DEFAULT_TRANSFORM == null) {
-            DEFAULT_TRANSFORM = MinecraftClient.getInstance()
+            return MinecraftClient.getInstance()
                     .getBakedModelManager()
-                    .getModel(new ModelIdentifier(new Identifier("apple"), "inventory"))
+                    .getModel(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"))
                     .getTransformation();
         }
         return DEFAULT_TRANSFORM;

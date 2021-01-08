@@ -1,5 +1,5 @@
 {
-  "parent": "item/generated",
+  "parent": "pixelpets:item/pet_base",
   "textures": {
     "layer0": "pixelpets:item/pets/pig_2"
   }
