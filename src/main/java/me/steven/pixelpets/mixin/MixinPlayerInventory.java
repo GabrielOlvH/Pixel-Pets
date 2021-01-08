@@ -17,6 +17,6 @@ public class MixinPlayerInventory {
 
     @Inject(method = "updateItems", at = @At("HEAD"))
     private void pixelPets_clearPetsMap(CallbackInfo ci) {
-        ((PixelPetsPlayerExtension) this.player).getInventoryPets().clear();
+        ((PixelPetsPlayerExtension) this.player).getTickingAbilities().clear();
     }
 }

@@ -14,6 +14,7 @@
   "pet.pixelpets.sheep": "Sheep",
   "pet.pixelpets.cat": "Cat",
   "pet.pixelpets.chicken": "Chicken",
+  "pet.pixelpets.fish": "Fish",
   "ability.pixelpets.drop_wool": "Cover me in wool",
   "ability.pixelpets.drop_wool.description": "Drops 1 to 3 wools.",
   "ability.pixelpets.extra_4hearts": "§4More hearts",
@@ -31,5 +32,7 @@
   "ability.pixelpets.drop_feather": "§7Covered in feather",
   "ability.pixelpets.drop_feather.description": "Drops 1 to 3 feathers.",
   "ability.pixelpets.slow_falling": "§7Soar the world",
-  "ability.pixelpets.slow_falling.description": "Gives you Slow Falling effect for 15 seconds."
+  "ability.pixelpets.slow_falling.description": "Gives you Slow Falling effect for 15 seconds.",
+  "ability.pixelpets.dolphins_grace": "§7Happy environment",
+  "ability.pixelpets.dolphins_grace.description": "Gives you Dolphin's Grace."
 }

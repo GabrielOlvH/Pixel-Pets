@@ -1,0 +1,14 @@
+{
+  "id": "pixelpets:fish",
+  "color": "0x3da3fc",
+  "abilities": [
+    {
+      "pos": 0,
+      "id": "pixelpets:dolphins_grace"
+    },
+    {
+      "pos": 1,
+      "id": "pixelpets:underwater_air"
+    }
+  ]
+}

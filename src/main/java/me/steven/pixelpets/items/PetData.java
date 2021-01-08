@@ -7,11 +7,14 @@ import me.steven.pixelpets.pets.PixelPets;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PetData {
     private Identifier petId;
@@ -88,6 +91,12 @@ public class PetData {
     public PixelPet getPet() {
         if (petId == null) petId = new Identifier("pixelpets:pig");
         return PixelPets.REGISTRY.get(petId);
+    }
+
+    public Text toText() {
+        int color = getPet().getCooldownDisplayColor();
+        MutableText ageText = new LiteralText(" [").append(new TranslatableText("item.pixelpets.pet.age." + getAge().toString().toLowerCase(Locale.ROOT))).append(new LiteralText("]"));
+        return new LiteralText(nickname).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color))).append(ageText.formatted(Formatting.DARK_GRAY));
     }
 
     public CompoundTag toTag() {

@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -21,6 +22,8 @@ public interface Ability {
     AbilityRarity getRarity();
     boolean onInteract(ItemStack stack, World world, LivingEntity entity);
     boolean inventoryTick(ItemStack stack, World world, LivingEntity entity);
+    @Nullable
+    StatusEffectInstance getPassiveEffect(World world, LivingEntity entity);
     int getCooldown();
     @Nullable
     Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers();
@@ -103,6 +106,11 @@ public interface Ability {
                 @Override
                 public boolean repels(EntityType<?> type) {
                     return false;
+                }
+
+                @Override
+                public StatusEffectInstance getPassiveEffect(World world, LivingEntity entity) {
+                    return null;
                 }
             };
             Abilities.REGISTRY.put(ability.getId(), ability);

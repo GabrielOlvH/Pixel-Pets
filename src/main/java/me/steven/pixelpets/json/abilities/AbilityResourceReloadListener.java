@@ -1,22 +1,20 @@
 package me.steven.pixelpets.json.abilities;
 
 import com.google.common.collect.Multimap;
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import it.unimi.dsi.fastutil.Function;
 import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.abilities.AbilityRarity;
-import me.steven.pixelpets.json.abilities.AbilityParser;
-import me.steven.pixelpets.json.abilities.AbilitySupplierParser;
-import me.steven.pixelpets.json.abilities.EntityAttributeParser;
 import me.steven.pixelpets.utils.AbilitySupplier;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -32,6 +30,7 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class AbilityResourceReloadListener implements SimpleSynchronousResourceReloadListener {
 
@@ -59,6 +58,7 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
                 Optional<AbilitySupplier> interact = AbilitySupplierParser.parse(result.has("interact") ? result.get("interact").getAsJsonObject() : null);
                 Multimap<EntityAttribute, EntityAttributeModifier> attributes = EntityAttributeParser.parse(result.get("attributes"));
                 Optional<Function<EntityType<?>, Boolean>> repels = AbilityParser.parseEntityType(result.get("repels"));
+                Optional<Supplier<StatusEffectInstance>> passiveEffect = result.has("passiveEffect") ? AbilityParser.parseStatusEffect(result.getAsJsonObject("passiveEffect")) : Optional.empty();
                 Ability ability = new Ability() {
                     @Override
                     public Identifier getId() {
@@ -78,6 +78,12 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
                     @Override
                     public boolean inventoryTick(ItemStack stack, World world, LivingEntity entity) {
                         return tick.isPresent() && tick.get().test(stack, world, entity);
+                    }
+
+                    @Override
+                    @Nullable
+                    public StatusEffectInstance getPassiveEffect(World world, LivingEntity entity) {
+                        return passiveEffect.map(Supplier::get).orElse(null);
                     }
 
                     @Override

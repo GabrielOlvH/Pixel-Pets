@@ -5,7 +5,6 @@ import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.abilities.AbilityRarity;
 import me.steven.pixelpets.pets.Age;
-import me.steven.pixelpets.pets.PixelPet;
 import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
@@ -16,7 +15,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.text.*;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -25,9 +27,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PixelPetItem extends Item implements DurabilityBarItem {
@@ -42,7 +43,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         if (data != null) {
             tooltip.add(LiteralText.EMPTY);
             if (data.getAbilities().isEmpty()) {
-                tooltip.add(new TranslatableText("item.pixelpets.pet.noabilities", getName(stack)));
+                tooltip.add(new TranslatableText("item.pixelpets.pet.noabilities", data.toText()));
             } else {
                 tooltip.add(new TranslatableText("item.pixelpets.pet.abilities").formatted(Formatting.AQUA));
                 data.getAbilities().forEach((id) -> {
@@ -70,9 +71,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     public Text getName(ItemStack stack) {
         PetData petData = PetData.fromTag(stack.getOrCreateTag());
         if (petData == null) return super.getName(stack);
-        int color = petData.getPet().getCooldownDisplayColor();
-        MutableText ageText = new LiteralText(" [").append(new TranslatableText("item.pixelpets.pet.age." + petData.getAge().toString().toLowerCase(Locale.ROOT))).append(new LiteralText("]"));
-        return new LiteralText(petData.getNickname()).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color))).append(ageText.formatted(Formatting.DARK_GRAY));
+        return petData.toText();
     }
 
     @Nullable
@@ -107,7 +106,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             Ability next = next(stack);
             //TODO use translatable text
             if (next != null)
-                user.sendMessage(getName(stack).shallowCopy().append(new LiteralText(" selected ability ").formatted(Formatting.WHITE)).append(new TranslatableText(next.getTranslationKey())), false);
+                user.sendMessage(data.toText().shallowCopy().append(new LiteralText(" selected ability ").formatted(Formatting.WHITE)).append(new TranslatableText(next.getTranslationKey())), false);
         } else if (data.getCooldown() <= 0) {
             Ability ability = getSelected(stack);
             if (ability != null && ability.onInteract(stack, world, user)) {
@@ -149,7 +148,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             Ability ability = getSelected(stack);
             if (ability != null) {
                 if (entity instanceof PixelPetsPlayerExtension) {
-                    ((PixelPetsPlayerExtension) entity).getInventoryPets().computeIfAbsent(data.getPet(), (a) -> new HashSet<>()).add(ability);
+                    ((PixelPetsPlayerExtension) entity).getTickingAbilities().computeIfAbsent(data.getPet(), (a) -> new HashMap<>()).put(ability, data);
                 }
                 if (ability.inventoryTick(stack, world, (LivingEntity) entity)) {
                     data.setCooldown(ability.getCooldown());

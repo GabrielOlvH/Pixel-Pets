@@ -1,18 +1,14 @@
 package me.steven.pixelpets.json.abilities;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import it.unimi.dsi.fastutil.Function;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -23,7 +19,9 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.registry.Registry;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
@@ -66,11 +64,44 @@ public class AbilityParser {
             }
         }
 
-        if (object.has("nearHostiles")) {
-            int inRadius = object.getAsJsonObject("nearHostiles").get("inRadius").getAsInt();
+        if (object.has("isNearHostiles")) {
+            int inRadius = object.get("isNearHostiles").getAsInt();
             return Optional.of((obj) -> {
                 LivingEntity player = (LivingEntity) obj;
                 return !player.world.getEntitiesByClass(HostileEntity.class, new Box(player.getBlockPos()).expand(inRadius), (e) -> true).isEmpty();
+            });
+        }
+
+        if (object.has("isUnderwater")) {
+            boolean value = object.get("isUnderwater").getAsBoolean();
+            return Optional.of((obj) -> {
+                LivingEntity player = (LivingEntity) obj;
+                return player.isSubmergedInWater() == value;
+            });
+        }
+
+        if (object.has("isFallFlying")) {
+            boolean value = object.get("isFallFlying").getAsBoolean();
+            return Optional.of((obj) -> {
+                LivingEntity player = (LivingEntity) obj;
+                return player.isFallFlying() == value;
+            });
+        }
+
+        if (object.has("fireTicks")) {
+            Optional<Function<Integer, Boolean>> fireTicks = parseIntCondition(object.get("fireTicks"));
+            return Optional.of((obj) -> {
+                LivingEntity player = (LivingEntity) obj;
+                return fireTicks.isPresent() && fireTicks.get().apply(player.getFireTicks());
+            });
+        }
+
+        if (object.has("hasStatusEffect")) {
+            String effectId = object.get("hasStatusEffect").getAsString();
+            Optional<StatusEffect> effect = Registry.STATUS_EFFECT.getOrEmpty(new Identifier(effectId));
+            return Optional.of((obj) -> {
+                LivingEntity player = (LivingEntity) obj;
+                return effect.isPresent() && player.hasStatusEffect(effect.get());
             });
         }
 

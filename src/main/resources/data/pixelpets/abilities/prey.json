@@ -4,9 +4,7 @@
   "rarity": "UNUSUAL",
   "tick": {
     "condition": {
-      "nearHostiles": {
-        "inRadius": 6
-      }
+      "isNearHostiles": 6
     },
     "effect": {
       "id": "minecraft:speed",

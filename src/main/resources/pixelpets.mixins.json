@@ -4,9 +4,15 @@
   "package": "me.steven.pixelpets.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinEntityStatusEffectS2CPacket",
     "MixinLivingEntity",
     "MixinPathAwareEntity",
-    "MixinPlayerInventory"
+    "MixinPlayerInventory",
+    "MixinStatusEffectInstance"
+  ],
+  "client": [
+    "MixinAbstractInventoryScreen",
+    "MixinClientPlayNetworkHandler"
   ],
   "injectors": {
     "defaultRequire": 1
