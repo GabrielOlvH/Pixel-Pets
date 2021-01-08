@@ -1,9 +1,7 @@
 package me.steven.pixelpets.mixin;
 
 import com.google.common.collect.Multimap;
-import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
-import me.steven.pixelpets.items.PetData;
 import me.steven.pixelpets.pets.PixelPet;
 import me.steven.pixelpets.player.PixelPetsPlayerExtension;
 import net.minecraft.entity.EquipmentSlot;
@@ -19,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +36,7 @@ public abstract class MixinLivingEntity implements PixelPetsPlayerExtension {
                 Multimap<EntityAttribute, EntityAttributeModifier> attributes = ability.getEntityAttributeModifiers();
                 if (attributes != null)
                     getAttributes().addTemporaryModifiers(attributes);
-                pixelPets_appliedPets.put(pet, abilities);
+                pixelPets_appliedPets.computeIfAbsent(pet, (a) -> new HashSet<>()).addAll(abilities);
             }
         }));
 
