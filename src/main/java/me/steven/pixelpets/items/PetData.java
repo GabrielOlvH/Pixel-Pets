@@ -27,6 +27,11 @@ public class PetData {
     private int ticksUntilGrow;
     private int variant;
 
+    public PetData(Identifier id) {
+        this.petId = id;
+        PixelPetItem.initialize(this);
+    }
+
     public Identifier getPetId() {
         return petId;
     }
@@ -118,7 +123,7 @@ public class PetData {
     @Nullable
     public static PetData fromTag(CompoundTag parent) {
         if (!parent.contains("PetData")) return null;
-        PetData data = new PetData();
+        PetData data = new PetData(new Identifier("pixelpets:pig"));
         CompoundTag tag = parent.getCompound("PetData");
         if (!tag.contains("PetId")) {
             tag.putString("PetId", "pixelpets:pig");

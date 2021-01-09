@@ -1,5 +1,6 @@
 package me.steven.pixelpets;
 
+import me.steven.pixelpets.items.PixelPetEggItem;
 import me.steven.pixelpets.items.PixelPetItem;
 import me.steven.pixelpets.json.abilities.AbilityResourceReloadListener;
 import me.steven.pixelpets.json.pets.PetResourceReloadListener;
@@ -16,6 +17,8 @@ public class PixelPetsMod implements ModInitializer  {
 
     public static final Item PET_ITEM =
             Registry.register(Registry.ITEM, new Identifier(MOD_ID, "pet"), new PixelPetItem(new Item.Settings().maxCount(1)));
+    public static final Item EGG_ITEM =
+            Registry.register(Registry.ITEM, new Identifier(MOD_ID, "egg"), new PixelPetEggItem());
 
     @Override
     public void onInitialize() {

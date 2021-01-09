@@ -124,7 +124,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         PetData data = PetData.fromTag(stack.getOrCreateTag());
 
         if (data == null) {
-            data = new PetData();
+            data = new PetData(new Identifier("pixelpets:pig"));
             initialize(data);
             stack.putSubTag("PetData", data.toTag());
         } else if (data.getAge() != Age.ADULT) {

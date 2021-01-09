@@ -1,4 +1,5 @@
 {
+  "item.pixelpets.egg": "Pixel Pet Egg",
   "item.pixelpets.pet": "Empty Pet",
   "item.pixelpets.pet.age": "Age: %s",
   "item.pixelpets.pet.age.baby": "Baby",
