@@ -12,7 +12,8 @@
   ],
   "client": [
     "MixinAbstractInventoryScreen",
-    "MixinClientPlayNetworkHandler"
+    "MixinClientPlayNetworkHandler",
+    "MixinHeldItemRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
