@@ -28,7 +28,7 @@ public class MixinEntityStatusEffectS2CPacket implements PixelPetsDataHolder {
         if (hasProvider) {
             CompoundTag compoundTag = buf.readCompoundTag();
             if (compoundTag != null)
-                this.petProvider = PetData.fromTag(compoundTag);
+                this.petProvider = PetData.fromTag(compoundTag.getCompound("PetData"));
         }
     }
 

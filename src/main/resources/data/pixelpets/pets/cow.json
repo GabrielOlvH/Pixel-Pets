@@ -1,6 +1,18 @@
 {
   "id": "pixelpets:cow",
   "color": "0x400e0e",
+  "variants": [
+    {
+      "index": 0
+    },
+    {
+      "index": 1
+    },
+    {
+      "index": 2,
+      "translationKey": "pet.pixelpets.cow.mushroom"
+    }
+  ],
   "abilities": [
     {
       "pos": 0,

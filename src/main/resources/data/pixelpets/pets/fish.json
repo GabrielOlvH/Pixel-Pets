@@ -1,6 +1,7 @@
 {
   "id": "pixelpets:fish",
   "color": "0x3da3fc",
+  "variants": 3,
   "abilities": [
     {
       "pos": 0,

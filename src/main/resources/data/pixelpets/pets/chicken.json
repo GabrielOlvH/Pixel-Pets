@@ -1,6 +1,7 @@
 {
   "id": "pixelpets:chicken",
   "color": "0xe8b14a",
+  "variants": 3,
   "abilities": [
     {
       "pos": 0,

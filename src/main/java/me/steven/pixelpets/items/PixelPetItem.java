@@ -8,13 +8,11 @@ import me.steven.pixelpets.extensions.PixelPetsPlayerExtension;
 import me.steven.pixelpets.pets.Age;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -39,7 +37,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        PetData data = PetData.fromTag(stack.getOrCreateTag());
+        PetData data = PetData.fromTag(stack);
         if (data != null) {
             tooltip.add(LiteralText.EMPTY);
             if (data.getAbilities().isEmpty()) {
@@ -69,22 +67,21 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
 
     @Override
     public Text getName(ItemStack stack) {
-        PetData petData = PetData.fromTag(stack.getOrCreateTag());
+        PetData petData = PetData.fromTag(stack);
         if (petData == null) return super.getName(stack);
         return petData.toText();
     }
 
     @Nullable
     public Ability getSelected(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
-        PetData data = PetData.fromTag(tag);
+        PetData data = PetData.fromTag(stack);
         if (data == null || data.getAbilities().isEmpty() || data.getSelected() == null) return null;
         return Abilities.REGISTRY.get(data.getSelected());
     }
 
     @Nullable
     private Ability next(ItemStack stack) {
-        PetData data = PetData.fromTag(stack.getOrCreateTag());
+        PetData data = PetData.fromTag(stack);
         if (data == null || data.getAbilities().isEmpty() || data.getSelected() == null) return null;
         Identifier selected = data.getSelected();
         int next = data.getAbilities().indexOf(selected) + 1;
@@ -100,7 +97,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (world.isClient()) return TypedActionResult.pass(stack);
-        PetData data = PetData.fromTag(stack.getOrCreateTag());
+        PetData data = PetData.fromTag(stack);
         if (data == null) return TypedActionResult.pass(stack);
         if (user.isSneaking()) {
             Ability next = next(stack);
@@ -121,11 +118,10 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (world.isClient()) return;
-        PetData data = PetData.fromTag(stack.getOrCreateTag());
+        PetData data = PetData.fromTag(stack);
 
         if (data == null) {
             data = new PetData(new Identifier("pixelpets:pig"));
-            initialize(data);
             stack.putSubTag("PetData", data.toTag());
         } else if (data.getAge() != Age.ADULT) {
             data.setTicksUntilGrow(data.getTicksUntilGrow() - 1);
@@ -174,28 +170,21 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
         }
     }
 
-    public static void initialize(PetData data) {
-        data.setNickname(I18n.translate(data.getPet().getTranslationKey()));
-        data.setAge(Age.BABY);
-        data.setTicksUntilGrow(1200);
-        data.setVariant(ThreadLocalRandom.current().nextInt(3));
-    }
-
     @Override
     public double getDurabilityBarProgress(ItemStack itemStack) {
-        PetData data = PetData.fromTag(itemStack.getOrCreateTag());
+        PetData data = PetData.fromTag(itemStack);
         return (double) data.getCooldown() / (double) Abilities.REGISTRY.get(data.getSelected()).getCooldown();
     }
 
     @Override
     public boolean hasDurabilityBar(ItemStack itemStack) {
-        PetData data = PetData.fromTag(itemStack.getOrCreateTag());
+        PetData data = PetData.fromTag(itemStack);
         return data != null && data.getCooldown() > 0 &&  Abilities.REGISTRY.containsKey(data.getSelected());
     }
 
     @Override
     public int getDurabilityBarColor(ItemStack stack) {
-        PetData data = PetData.fromTag(stack.getTag());
+        PetData data = PetData.fromTag(stack);
         return data.getPet().getCooldownDisplayColor();
     }
 }

@@ -1,6 +1,7 @@
 {
   "id": "pixelpets:pig",
   "color": "0xde78be",
+  "variants": 3,
   "abilities": [
     {
       "pos": 0,

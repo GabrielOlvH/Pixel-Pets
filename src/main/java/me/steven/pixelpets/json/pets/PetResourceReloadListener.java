@@ -1,35 +1,28 @@
 package me.steven.pixelpets.json.pets;
 
-import com.google.common.collect.Multimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
-import me.steven.pixelpets.abilities.AbilityRarity;
-import me.steven.pixelpets.json.abilities.AbilitySupplierParser;
-import me.steven.pixelpets.json.abilities.EntityAttributeParser;
 import me.steven.pixelpets.pets.PixelPet;
 import me.steven.pixelpets.pets.PixelPets;
-import me.steven.pixelpets.utils.AbilitySupplier;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.util.JsonHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class PetResourceReloadListener implements SimpleSynchronousResourceReloadListener {
 
@@ -67,7 +60,23 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
                     String abilityId = obj.get("id").getAsString();
                     abilities.set(pos, new Identifier(abilityId));
                 });
-                PixelPets.REGISTRY.put(id, new PixelPet(id, cooldownColorDisplay, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
+                List<PixelPet.Variant> variants = new ArrayList<>();
+                if (!result.has("variants")) {
+                    variants.add(new PixelPet.Variant(0, id, null));
+                } else if (result.get("variants").isJsonPrimitive()) {
+                    int totalVariants = result.get("variants").getAsInt();
+                    for (int i = 0; i < totalVariants; i++) {
+                        variants.add(new PixelPet.Variant(i, id, null));
+                    }
+                } else if (result.get("variants").isJsonArray()) {
+                    result.get("variants").getAsJsonArray().forEach(element -> {
+                        JsonObject obj = element.getAsJsonObject();
+                        String translationKey = JsonHelper.getString(obj, "translationKey", null);
+                        int index = obj.get("index").getAsInt();
+                        variants.add(new PixelPet.Variant(index, id, translationKey));
+                    });
+                }
+                PixelPets.REGISTRY.put(id, new PixelPet(id, cooldownColorDisplay, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
             } catch (IOException e) {
                 LOGGER.error("Unable to load pet from '" + fileId + "'.", e);
             }

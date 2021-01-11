@@ -24,7 +24,7 @@ public class AbilitySupplierParser {
                     if (!condition.isPresent() || condition.get().apply(entity)) {
                         StatusEffectInstance effect = statusOptional.get().get();
                         PixelPetsDataHolder ext = (PixelPetsDataHolder) effect;
-                        ext.setPetData(PetData.fromTag(stack.getOrCreateTag()));
+                        ext.setPetData(PetData.fromTag(stack));
                         entity.addStatusEffect(effect);
                         return true;
                     }

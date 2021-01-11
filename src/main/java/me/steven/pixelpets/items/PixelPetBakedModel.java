@@ -41,7 +41,7 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
 
     @Override
     public void emitItemQuads(ItemStack itemStack, Supplier<Random> supplier, RenderContext ctx) {
-        PetData petData = PetData.fromTag(itemStack.getOrCreateTag());
+        PetData petData = PetData.fromTag(itemStack);
         Identifier modelId;
         if (petData == null) {
             modelId = new Identifier(PixelPetsMod.MOD_ID, "pets/pig_0");

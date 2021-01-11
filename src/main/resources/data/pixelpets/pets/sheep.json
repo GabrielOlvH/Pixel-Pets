@@ -1,6 +1,7 @@
 {
   "id": "pixelpets:sheep",
   "color": "0xf0f0f0",
+  "variants": 3,
   "abilities": [
     {
       "pos": 0,

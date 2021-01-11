@@ -39,7 +39,6 @@ public class PixelPetEggItem extends Item {
                     id = pets.get(world.random.nextInt(pets.size()));
                 }
                 PetData data = new PetData(id);
-                PixelPetItem.initialize(data);
                 if (isBreed) {
                     Ability[] abilities = Arrays.stream(PixelPets.REGISTRY.get(id).getAbilities()).filter((a) -> a.getRarity().equals(AbilityRarity.UNUSUAL)).toArray(Ability[]::new);
                     Ability ability = abilities[world.random.nextInt(abilities.length)];

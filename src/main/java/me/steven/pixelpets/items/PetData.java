@@ -4,6 +4,8 @@ import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.pets.Age;
 import me.steven.pixelpets.pets.PixelPet;
 import me.steven.pixelpets.pets.PixelPets;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PetData {
     private Identifier petId;
@@ -29,7 +32,19 @@ public class PetData {
 
     public PetData(Identifier id) {
         this.petId = id;
-        PixelPetItem.initialize(this);
+        List<PixelPet.Variant> variants = getPet().getVariants();
+        setVariant(variants.get(ThreadLocalRandom.current().nextInt(variants.size())).getId());
+        setNickname(I18n.translate(getPet().getTranslationKey(getVariant())));
+        setAge(Age.BABY);
+        setTicksUntilGrow(1200);
+    }
+
+    public PetData(Identifier id, int variant) {
+        this.petId = id;
+        setVariant(variant);
+        setNickname(I18n.translate(getPet().getTranslationKey(getVariant())));
+        setAge(Age.BABY);
+        setTicksUntilGrow(1200);
     }
 
     public Identifier getPetId() {
@@ -120,14 +135,14 @@ public class PetData {
         return tag;
     }
 
-    @Nullable
-    public static PetData fromTag(CompoundTag parent) {
-        if (!parent.contains("PetData")) return null;
+    public static PetData fromTag(ItemStack stack) {
+        return fromTag(stack.getOrCreateSubTag("PetData"));
+    }
+
+    public static PetData fromTag(CompoundTag tag) {
         PetData data = new PetData(new Identifier("pixelpets:pig"));
-        CompoundTag tag = parent.getCompound("PetData");
-        if (!tag.contains("PetId")) {
-            tag.putString("PetId", "pixelpets:pig");
-        }
+        if (!tag.contains("PetId"))
+            return data;
         data.petId = new Identifier(tag.getString("PetId"));
         data.nickname = tag.getString("Nickname");
         data.age = Age.values()[tag.getInt("Age")];

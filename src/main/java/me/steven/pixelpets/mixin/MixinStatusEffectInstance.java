@@ -25,7 +25,7 @@ public class MixinStatusEffectInstance implements PixelPetsDataHolder {
     @Inject(method = "fromTag(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/entity/effect/StatusEffectInstance;", at = @At("RETURN"))
     private static void pixelPets_loadPetProvider(CompoundTag tag, CallbackInfoReturnable<StatusEffectInstance> cir) {
         if (tag.contains("PetData", 10)) {
-            PetData providerPet = PetData.fromTag(tag);
+            PetData providerPet = PetData.fromTag(tag.getCompound("PetData"));
             StatusEffectInstance instance = cir.getReturnValue();
             ((PixelPetsDataHolder) instance).setPetData(providerPet);
         }
