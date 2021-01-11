@@ -185,6 +185,6 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     @Override
     public int getDurabilityBarColor(ItemStack stack) {
         PetData data = PetData.fromTag(stack);
-        return data.getPet().getCooldownDisplayColor();
+        return data.getPet().getColor(data.getVariant());
     }
 }

@@ -48,7 +48,7 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
             ) {
                 JsonObject result = new JsonParser().parse(reader).getAsJsonObject();
                 Identifier id = new Identifier(result.get("id").getAsString());
-                int cooldownColorDisplay = Integer.decode(result.get("color").getAsString());
+                int color = Integer.decode(result.get("color").getAsString());
                 JsonArray abilitiesArray = result.getAsJsonArray("abilities");
                 List<Identifier> abilities = new ArrayList<>(abilitiesArray.size());
                 for (int i = 0; i < abilitiesArray.size(); i++) {
@@ -62,21 +62,22 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
                 });
                 List<PixelPet.Variant> variants = new ArrayList<>();
                 if (!result.has("variants")) {
-                    variants.add(new PixelPet.Variant(0, id, null));
+                    variants.add(new PixelPet.Variant(0, id, color, null));
                 } else if (result.get("variants").isJsonPrimitive()) {
                     int totalVariants = result.get("variants").getAsInt();
                     for (int i = 0; i < totalVariants; i++) {
-                        variants.add(new PixelPet.Variant(i, id, null));
+                        variants.add(new PixelPet.Variant(i, id, color,null));
                     }
                 } else if (result.get("variants").isJsonArray()) {
                     result.get("variants").getAsJsonArray().forEach(element -> {
                         JsonObject obj = element.getAsJsonObject();
                         String translationKey = JsonHelper.getString(obj, "translationKey", null);
+                        int variantColor = Integer.decode(JsonHelper.getString(obj, "color", result.get("color").getAsString()));
                         int index = obj.get("index").getAsInt();
-                        variants.add(new PixelPet.Variant(index, id, translationKey));
+                        variants.add(new PixelPet.Variant(index, id, variantColor, translationKey));
                     });
                 }
-                PixelPets.REGISTRY.put(id, new PixelPet(id, cooldownColorDisplay, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
+                PixelPets.REGISTRY.put(id, new PixelPet(id, color, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
             } catch (IOException e) {
                 LOGGER.error("Unable to load pet from '" + fileId + "'.", e);
             }

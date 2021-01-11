@@ -10,7 +10,8 @@
     },
     {
       "index": 2,
-      "translationKey": "pet.pixelpets.cow.mushroom"
+      "translationKey": "pet.pixelpets.cow.mushroom",
+      "color": "0xdb2143"
     }
   ],
   "abilities": [

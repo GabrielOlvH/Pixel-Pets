@@ -114,7 +114,7 @@ public class PetData {
     }
 
     public Text toText() {
-        int color = getPet().getCooldownDisplayColor();
+        int color = getPet().getColor(variant);
         MutableText ageText = new LiteralText(" [").append(new TranslatableText("item.pixelpets.pet.age." + getAge().toString().toLowerCase(Locale.ROOT))).append(new LiteralText("]"));
         return new LiteralText(nickname).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color))).append(ageText.formatted(Formatting.DARK_GRAY));
     }

@@ -1,7 +1,19 @@
 {
   "id": "pixelpets:sheep",
   "color": "0xf0f0f0",
-  "variants": 3,
+  "variants": [
+    {
+      "index": 0
+    },
+    {
+      "index": 1,
+      "translationKey": "pet.pixelpets.sheep.pink",
+      "color": "0xbf47a7"
+    },
+    {
+      "index": 2
+    }
+  ],
   "abilities": [
     {
       "pos": 0,

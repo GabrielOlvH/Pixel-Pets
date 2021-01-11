@@ -12,12 +12,12 @@ public class PixelPet {
     private final Identifier id;
     private final String translationKey;
     private final Ability[] abilities;
-    private final int cooldownDisplayColor;
+    private final int color;
     private final List<Variant> variants;
 
-    public PixelPet(Identifier id, int cooldownDisplayColor, List<Variant> variants, Ability... abilities) {
+    public PixelPet(Identifier id, int color, List<Variant> variants, Ability... abilities) {
         this.id = id;
-        this.cooldownDisplayColor = cooldownDisplayColor;
+        this.color = color;
         this.translationKey = "pet." + id.getNamespace() + "." + id.getPath();
         this.variants = variants.stream().sorted(Comparator.comparingInt((a) -> a.id)).collect(Collectors.toList());
         this.abilities = abilities;
@@ -35,8 +35,13 @@ public class PixelPet {
         return abilities;
     }
 
-    public int getCooldownDisplayColor() {
-        return cooldownDisplayColor;
+    public int getColor() {
+        return color;
+    }
+
+    public int getColor(int variant) {
+        Variant v = variants.get(variant);
+        return v.color;
     }
 
     public List<Variant> getVariants() {
@@ -51,12 +56,14 @@ public class PixelPet {
     public static class Variant {
         private final int id;
         private final Identifier parentId;
+        private final int color;
         @Nullable
         private final String translationKey;
 
-        public Variant(int id, Identifier parentId, @Nullable String translationKey) {
+        public Variant(int id, Identifier parentId, int color, @Nullable String translationKey) {
             this.id = id;
             this.parentId = parentId;
+            this.color = color;
             this.translationKey = translationKey;
         }
 
@@ -66,6 +73,10 @@ public class PixelPet {
 
         public Identifier getParentId() {
             return parentId;
+        }
+
+        public int getColor() {
+            return color;
         }
 
         @Nullable
