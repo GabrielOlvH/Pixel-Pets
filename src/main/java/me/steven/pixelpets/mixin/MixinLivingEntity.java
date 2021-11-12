@@ -30,7 +30,7 @@ public abstract class MixinLivingEntity implements PixelPetsPlayerExtension {
     private final Map<PixelPet, Map<Ability, PetData>> pixelPets_pets = new HashMap<>();
     private final Map<PixelPet, Map<Ability, PetData>> pixelPets_appliedPets = new HashMap<>();
 
-    @Inject(method = "method_30129", at = @At("TAIL"))
+    @Inject(method = "getEquipment", at = @At("TAIL"))
     private void pixelPets_addExtraAttributes(CallbackInfoReturnable<Map<EquipmentSlot, ItemStack>> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
         pixelPets_pets.forEach((pet, abilities) -> abilities.forEach((ability, data) -> {

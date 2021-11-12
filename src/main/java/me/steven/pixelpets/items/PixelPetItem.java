@@ -1,6 +1,5 @@
 package me.steven.pixelpets.items;
 
-import me.shedaniel.cloth.api.durability.bar.DurabilityBarItem;
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.abilities.AbilityRarity;
@@ -29,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class PixelPetItem extends Item implements DurabilityBarItem {
+public class PixelPetItem extends Item {
 
     public PixelPetItem(Settings settings) {
         super(settings);
@@ -89,7 +88,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             next = 0;
         }
         data.setSelected(data.getAbilities().get(next));
-        stack.putSubTag("PetData", data.toTag());
+        stack.setSubNbt("PetData", data.toTag());
         return Abilities.REGISTRY.get(data.getSelected());
     }
 
@@ -108,7 +107,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             Ability ability = getSelected(stack);
             if (ability != null && ability.onInteract(stack, world, user)) {
                 data.setCooldown(ability.getCooldown());
-                stack.putSubTag("PetData", data.toTag());
+                stack.setSubNbt("PetData", data.toTag());
             }
         }
         else return TypedActionResult.pass(stack);
@@ -122,12 +121,12 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
 
         if (data == null) {
             data = new PetData(new Identifier("pixelpets:pig"));
-            stack.putSubTag("PetData", data.toTag());
+            stack.setSubNbt("PetData", data.toTag());
         } else if (data.getAge() != Age.ADULT) {
             data.setTicksUntilGrow(data.getTicksUntilGrow() - 1);
             if (data.getTicksUntilGrow() <= 0)
                 grow(data);
-            stack.putSubTag("PetData", data.toTag());
+            stack.setSubNbt("PetData", data.toTag());
         }
 
         if (data.getAge() == Age.CHILD && world.random.nextDouble() > 0.97) {
@@ -136,7 +135,7 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
             if (unusual.length > 0) {
                 int toLearn = world.random.nextInt(unusual.length);
                 data.addAbility(unusual[toLearn]);
-                stack.putSubTag("PetData", data.toTag());
+                stack.setSubNbt("PetData", data.toTag());
             }
         }
 
@@ -148,12 +147,12 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
                 }
                 if (ability.inventoryTick(stack, world, (LivingEntity) entity)) {
                     data.setCooldown(ability.getCooldown());
-                    stack.putSubTag("PetData", data.toTag());
+                    stack.setSubNbt("PetData", data.toTag());
                 }
             }
         } else {
             data.setCooldown(data.getCooldown() - 1);
-            stack.putSubTag("PetData", data.toTag());
+            stack.setSubNbt("PetData", data.toTag());
         }
     }
 
@@ -171,19 +170,19 @@ public class PixelPetItem extends Item implements DurabilityBarItem {
     }
 
     @Override
-    public double getDurabilityBarProgress(ItemStack itemStack) {
+    public int getItemBarStep(ItemStack itemStack) {
         PetData data = PetData.fromTag(itemStack);
-        return (double) data.getCooldown() / (double) Abilities.REGISTRY.get(data.getSelected()).getCooldown();
+        return (int)((double) data.getCooldown() / (double) Abilities.REGISTRY.get(data.getSelected()).getCooldown());
     }
 
     @Override
-    public boolean hasDurabilityBar(ItemStack itemStack) {
+    public boolean isItemBarVisible(ItemStack itemStack) {
         PetData data = PetData.fromTag(itemStack);
         return data != null && data.getCooldown() > 0 &&  Abilities.REGISTRY.containsKey(data.getSelected());
     }
 
     @Override
-    public int getDurabilityBarColor(ItemStack stack) {
+    public int getItemBarColor(ItemStack stack) {
         PetData data = PetData.fromTag(stack);
         return data.getPet().getColor(data.getVariant());
     }

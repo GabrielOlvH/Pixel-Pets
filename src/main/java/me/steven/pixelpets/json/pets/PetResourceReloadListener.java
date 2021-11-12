@@ -39,7 +39,7 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
     }
 
     @Override
-    public void apply(ResourceManager manager) {
+    public void reload(ResourceManager manager) {
         Collection<Identifier> pets = manager.findResources("pets", (r) -> r.endsWith(".json") || r.endsWith(".json5"));
         for (Identifier fileId : pets) {
             try (

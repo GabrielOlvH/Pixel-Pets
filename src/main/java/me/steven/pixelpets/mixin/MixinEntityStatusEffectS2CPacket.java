@@ -3,7 +3,7 @@ package me.steven.pixelpets.mixin;
 import me.steven.pixelpets.extensions.PixelPetsDataHolder;
 import me.steven.pixelpets.items.PetData;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
 import org.jetbrains.annotations.Nullable;
@@ -22,11 +22,11 @@ public class MixinEntityStatusEffectS2CPacket implements PixelPetsDataHolder {
         this.petProvider = ext.getPetData();
     }
 
-    @Inject(method = "read", at = @At("TAIL"))
+    @Inject(method = "<init>(Lnet/minecraft/network/PacketByteBuf;)V", at = @At("TAIL"))
     private void pixelPets_readPetProvider(PacketByteBuf buf, CallbackInfo ci) {
         boolean hasProvider = buf.readBoolean();
         if (hasProvider) {
-            CompoundTag compoundTag = buf.readCompoundTag();
+            NbtCompound compoundTag = buf.readNbt();
             if (compoundTag != null)
                 this.petProvider = PetData.fromTag(compoundTag.getCompound("PetData"));
         }
@@ -36,9 +36,9 @@ public class MixinEntityStatusEffectS2CPacket implements PixelPetsDataHolder {
     private void pixelPets_writePetProvider(PacketByteBuf buf, CallbackInfo ci) {
         buf.writeBoolean(petProvider != null);
         if (petProvider != null) {
-            CompoundTag tag = new CompoundTag();
+            NbtCompound tag = new NbtCompound();
             tag.put("PetData", petProvider.toTag());
-            buf.writeCompoundTag(tag);
+            buf.writeNbt(tag);
         }
     }
 

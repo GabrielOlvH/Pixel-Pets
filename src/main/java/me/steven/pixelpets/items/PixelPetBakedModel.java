@@ -83,7 +83,7 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
     }
 
     @Override
-    public Sprite getSprite() {
+    public Sprite getParticleSprite() {
         return null;
     }
 

@@ -13,7 +13,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Box;
@@ -109,7 +109,7 @@ public class AbilityParser {
             JsonObject nbt = object.get("nbt").getAsJsonObject();
             return Optional.of((obj) -> {
                 LivingEntity player = (LivingEntity) obj;
-                CompoundTag compoundTag = player.toTag(new CompoundTag());
+                NbtCompound compoundTag = player.writeNbt(new NbtCompound());
                 return nbt.entrySet().stream().allMatch(entry -> {
                     if (!compoundTag.contains(entry.getKey())) return false;
                     JsonElement element = entry.getValue();
@@ -170,7 +170,7 @@ public class AbilityParser {
         Item item = Registry.ITEM.get(id);
         Optional<Supplier<Integer>> countProvider = parseIntProvider(object.get("count"));
         int count = countProvider.orElse(() -> 1).get();
-        CompoundTag nbt = new CompoundTag();
+        NbtCompound nbt = new NbtCompound();
         if (object.has("nbt")) {
             object.getAsJsonObject("nbt").entrySet().forEach(e -> {
                 JsonPrimitive value = e.getValue().getAsJsonPrimitive();
@@ -184,7 +184,7 @@ public class AbilityParser {
         }
         return Optional.of(() -> {
             ItemStack itemStack = new ItemStack(item, count);
-            if (!nbt.isEmpty()) itemStack.setTag(nbt);
+            if (!nbt.isEmpty()) itemStack.setNbt(nbt);
             return itemStack;
         });
     }

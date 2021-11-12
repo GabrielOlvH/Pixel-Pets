@@ -29,8 +29,8 @@ public class PixelPetsModClient implements ClientModInitializer {
             else return null;
         });
 
-        FabricModelPredicateProviderRegistry.register(PixelPetsMod.EGG_ITEM, new Identifier(PixelPetsMod.MOD_ID, "hatching"), (stack, world, entity) -> {
-            int hatching = stack.getOrCreateTag().getInt("hatching");
+        FabricModelPredicateProviderRegistry.register(PixelPetsMod.EGG_ITEM, new Identifier(PixelPetsMod.MOD_ID, "hatching"), (stack, world, entity, a) -> {
+            int hatching = stack.getOrCreateNbt().getInt("hatching");
             if (hatching < 50)
                 return 0.3f;
             else if (hatching < 100)

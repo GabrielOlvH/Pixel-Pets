@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -22,7 +22,7 @@ public class PixelPetEggItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        CompoundTag tag = stack.getOrCreateTag();
+        NbtCompound tag = stack.getOrCreateNbt();
         boolean isBreed = tag.contains("isBreed") && tag.getBoolean("isBreed");
         if (!tag.contains("hatching")) {
             tag.putInt("hatching", 500);
@@ -44,8 +44,8 @@ public class PixelPetEggItem extends Item {
                     Ability ability = abilities[world.random.nextInt(abilities.length)];
                     data.addAbility(ability);
                 }
-                petStack.getOrCreateTag().put("PetData", data.toTag());
-                ((PlayerEntity) entity).inventory.setStack(slot, petStack);
+                petStack.getOrCreateNbt().put("PetData", data.toTag());
+                ((PlayerEntity) entity).getInventory().setStack(slot, petStack);
             }
         }
     }

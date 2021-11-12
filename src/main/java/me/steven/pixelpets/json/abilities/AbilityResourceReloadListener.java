@@ -42,7 +42,7 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
     }
 
     @Override
-    public void apply(ResourceManager manager) {
+    public void reload(ResourceManager manager) {
         Collection<Identifier> abilities = manager.findResources("abilities", (r) -> r.endsWith(".json") || r.endsWith(".json5"));
         for (Identifier fileId : abilities) {
             try (

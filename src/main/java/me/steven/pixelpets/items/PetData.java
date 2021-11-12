@@ -6,9 +6,9 @@ import me.steven.pixelpets.pets.PixelPet;
 import me.steven.pixelpets.pets.PixelPets;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -119,14 +119,14 @@ public class PetData {
         return new LiteralText(nickname).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color))).append(ageText.formatted(Formatting.DARK_GRAY));
     }
 
-    public CompoundTag toTag() {
-        CompoundTag tag = new CompoundTag();
+    public NbtCompound toTag() {
+        NbtCompound tag = new NbtCompound();
         tag.putString("PetId", petId.toString());
         tag.putString("Nickname", nickname);
         tag.putInt("Age", age.ordinal());
         tag.putInt("TicksUntilGrow", ticksUntilGrow);
-        ListTag abilitiesTag = new ListTag();
-        abilities.forEach((ability) -> abilitiesTag.add(StringTag.of(ability.toString())));
+        NbtList abilitiesTag = new NbtList();
+        abilities.forEach((ability) -> abilitiesTag.add(NbtString.of(ability.toString())));
         tag.put("Abilities", abilitiesTag);
         if (selected != null)
             tag.putString("Selected", selected.toString());
@@ -136,10 +136,10 @@ public class PetData {
     }
 
     public static PetData fromTag(ItemStack stack) {
-        return fromTag(stack.getOrCreateSubTag("PetData"));
+        return fromTag(stack.getOrCreateSubNbt("PetData"));
     }
 
-    public static PetData fromTag(CompoundTag tag) {
+    public static PetData fromTag(NbtCompound tag) {
         PetData data = new PetData(new Identifier("pixelpets:pig"));
         if (!tag.contains("PetId"))
             return data;
