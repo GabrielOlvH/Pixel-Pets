@@ -37,51 +37,50 @@ public class PixelPetItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         PetData data = PetData.fromTag(stack);
-        if (data != null) {
-            tooltip.add(LiteralText.EMPTY);
-            if (data.getAbilities().isEmpty()) {
-                tooltip.add(new TranslatableText("item.pixelpets.pet.noabilities", data.toText()));
-            } else {
-                tooltip.add(new TranslatableText("item.pixelpets.pet.abilities").formatted(Formatting.AQUA));
-                data.getAbilities().forEach((id) -> {
-                    Ability ability = Abilities.REGISTRY.get(id);
-                    if (ability == null) return;
-                    MutableText text = new TranslatableText(ability.getTranslationKey());
-                    if (data.getSelected() != null && data.getSelected().equals(id))
-                        text = new LiteralText(" [*] ").append(text);
-                    else
-                        text = new LiteralText(" [ ] ").append(text);
-                    tooltip.add(text);
-                    if (Screen.hasShiftDown()) {
-                        tooltip.add(new LiteralText("     ").append(new TranslatableText(ability.getTranslationKey() + ".description")).formatted(Formatting.ITALIC, Formatting.GRAY));
-                    }
-                });
-            }
-            if (data.getCooldown() > 0) {
-                tooltip.add(LiteralText.EMPTY);
-                tooltip.add(new TranslatableText("item.pixelpets.pet.cooldown", data.getCooldown()).formatted(Formatting.GRAY, Formatting.ITALIC));
-            }
+
+        tooltip.add(LiteralText.EMPTY);
+        if (data.getAbilities().isEmpty()) {
+            tooltip.add(new TranslatableText("item.pixelpets.pet.noabilities", data.toText()));
+        } else {
+            tooltip.add(new TranslatableText("item.pixelpets.pet.abilities").formatted(Formatting.AQUA));
+            data.getAbilities().forEach((id) -> {
+                Ability ability = Abilities.REGISTRY.get(id);
+                if (ability == null) return;
+                MutableText text = new TranslatableText(ability.getTranslationKey());
+                if (data.getSelected() != null && data.getSelected().equals(id))
+                    text = new LiteralText(" [*] ").append(text);
+                else
+                    text = new LiteralText(" [ ] ").append(text);
+                tooltip.add(text);
+                if (Screen.hasShiftDown()) {
+                    tooltip.add(new LiteralText("     ").append(new TranslatableText(ability.getTranslationKey() + ".description")).formatted(Formatting.ITALIC, Formatting.GRAY));
+                }
+            });
         }
+        if (data.getCooldown() > 0) {
+            tooltip.add(LiteralText.EMPTY);
+            tooltip.add(new TranslatableText("item.pixelpets.pet.cooldown", data.getCooldown()).formatted(Formatting.GRAY, Formatting.ITALIC));
+        }
+
     }
 
     @Override
     public Text getName(ItemStack stack) {
         PetData petData = PetData.fromTag(stack);
-        if (petData == null) return super.getName(stack);
         return petData.toText();
     }
 
     @Nullable
     public Ability getSelected(ItemStack stack) {
         PetData data = PetData.fromTag(stack);
-        if (data == null || data.getAbilities().isEmpty() || data.getSelected() == null) return null;
+        if (data.getAbilities().isEmpty() || data.getSelected() == null) return null;
         return Abilities.REGISTRY.get(data.getSelected());
     }
 
     @Nullable
     private Ability next(ItemStack stack) {
         PetData data = PetData.fromTag(stack);
-        if (data == null || data.getAbilities().isEmpty() || data.getSelected() == null) return null;
+        if (data.getAbilities().isEmpty() || data.getSelected() == null) return null;
         Identifier selected = data.getSelected();
         int next = data.getAbilities().indexOf(selected) + 1;
         if (next >= data.getAbilities().size()) {
@@ -97,7 +96,6 @@ public class PixelPetItem extends Item {
         ItemStack stack = user.getStackInHand(hand);
         if (world.isClient()) return TypedActionResult.pass(stack);
         PetData data = PetData.fromTag(stack);
-        if (data == null) return TypedActionResult.pass(stack);
         if (user.isSneaking()) {
             Ability next = next(stack);
             //TODO use translatable text
@@ -107,6 +105,7 @@ public class PixelPetItem extends Item {
             Ability ability = getSelected(stack);
             if (ability != null && ability.onInteract(stack, world, user)) {
                 data.setCooldown(ability.getCooldown());
+                data.setTotalCooldown(ability.getCooldown());
                 stack.setSubNbt("PetData", data.toTag());
             }
         }
@@ -119,10 +118,7 @@ public class PixelPetItem extends Item {
         if (world.isClient()) return;
         PetData data = PetData.fromTag(stack);
 
-        if (data == null) {
-            data = new PetData(new Identifier("pixelpets:pig"));
-            stack.setSubNbt("PetData", data.toTag());
-        } else if (data.getAge() != Age.ADULT) {
+       if (data.getAge() != Age.ADULT) {
             data.setTicksUntilGrow(data.getTicksUntilGrow() - 1);
             if (data.getTicksUntilGrow() <= 0)
                 grow(data);
@@ -130,8 +126,7 @@ public class PixelPetItem extends Item {
         }
 
         if (data.getAge() == Age.CHILD && world.random.nextDouble() > 0.97) {
-            PetData finalData = data;
-            Ability[] unusual = Arrays.stream(data.getPet().getAbilities()).filter(ability -> ability.getRarity() == AbilityRarity.UNUSUAL && !finalData.getAbilities().contains(ability.getId())).toArray(Ability[]::new);
+            Ability[] unusual = Arrays.stream(data.getPet().getAbilities()).filter(ability -> ability.getRarity() == AbilityRarity.UNUSUAL && !data.getAbilities().contains(ability.getId())).toArray(Ability[]::new);
             if (unusual.length > 0) {
                 int toLearn = world.random.nextInt(unusual.length);
                 data.addAbility(unusual[toLearn]);
@@ -147,6 +142,7 @@ public class PixelPetItem extends Item {
                 }
                 if (ability.inventoryTick(stack, world, (LivingEntity) entity)) {
                     data.setCooldown(ability.getCooldown());
+                    data.setTotalCooldown(ability.getCooldown());
                     stack.setSubNbt("PetData", data.toTag());
                 }
             }
@@ -172,13 +168,13 @@ public class PixelPetItem extends Item {
     @Override
     public int getItemBarStep(ItemStack itemStack) {
         PetData data = PetData.fromTag(itemStack);
-        return (int)((double) data.getCooldown() / (double) Abilities.REGISTRY.get(data.getSelected()).getCooldown());
+        return (int)((data.getTotalCooldown() - data.getCooldown()) * 13.0f / data.getTotalCooldown());
     }
 
     @Override
     public boolean isItemBarVisible(ItemStack itemStack) {
         PetData data = PetData.fromTag(itemStack);
-        return data != null && data.getCooldown() > 0 &&  Abilities.REGISTRY.containsKey(data.getSelected());
+        return data.getCooldown() > 0 &&  Abilities.REGISTRY.containsKey(data.getSelected());
     }
 
     @Override

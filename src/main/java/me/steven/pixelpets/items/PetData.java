@@ -27,6 +27,7 @@ public class PetData {
     @Nullable
     private Identifier selected;
     private int cooldown;
+    private int totalCooldown;
     private int ticksUntilGrow;
     private int variant;
 
@@ -92,6 +93,14 @@ public class PetData {
         this.cooldown = cooldown;
     }
 
+    public void setTotalCooldown(int totalCooldown) {
+        this.totalCooldown = totalCooldown;
+    }
+
+    public int getTotalCooldown() {
+        return totalCooldown;
+    }
+
     public int getTicksUntilGrow() {
         return ticksUntilGrow;
     }
@@ -131,6 +140,7 @@ public class PetData {
         if (selected != null)
             tag.putString("Selected", selected.toString());
         tag.putInt("Cooldown", cooldown);
+        tag.putInt("TotalCooldown", totalCooldown);
         tag.putInt("Variant", variant);
         return tag;
     }
@@ -152,6 +162,7 @@ public class PetData {
         if (tag.contains("Selected"))
             data.selected = new Identifier(tag.getString("Selected"));
         data.cooldown = tag.getInt("Cooldown");
+        data.totalCooldown = tag.getInt("TotalCooldown");
         data.variant = tag.getInt("Variant");
         return data;
     }
