@@ -1,0 +1,42 @@
+{
+  "id": "pixelpets:lightweight",
+  "actions": {
+    "0": {
+      "cooldown": 1200,
+      "interact": {
+        "effect": {
+          "id": "minecraft:slow_falling",
+          "duration": 240,
+          "amplifier": 0
+        }
+      }
+    },
+    "1": {
+      "cooldown": 1100,
+      "interact": {
+        "effect": {
+          "id": "minecraft:slow_falling",
+          "duration": 360,
+          "amplifier": 0
+        }
+      }
+    },
+    "2": {
+      "cooldown": 1000,
+      "interact": {
+        "effect": {
+          "id": "minecraft:slow_falling",
+          "duration": 480,
+          "amplifier": 0
+        }
+      }
+    },
+    "3": {
+      "passiveEffect": {
+        "id": "minecraft:slow_falling",
+        "amplifier": 0
+      }
+    }
+  }
+
+}

@@ -1,8 +1,8 @@
 package me.steven.pixelpets.mixin;
 
-import me.steven.pixelpets.abilities.Ability;
+import me.steven.pixelpets.abilities.AbilityAction;
 import me.steven.pixelpets.extensions.PixelPetsPlayerExtension;
-import me.steven.pixelpets.items.PetData;
+import me.steven.pixelpets.pets.PetData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
 import net.minecraft.entity.mob.MobEntity;
@@ -24,11 +24,11 @@ public class MixinPathAwareEntity extends MobEntity {
     }
 
     @Inject(method = "<init>", at = @At(value = "TAIL"))
-    private void f(EntityType<? extends MobEntity> entityType, World world, CallbackInfo ci) {
+    private void pixelpets_pathawareFlee(EntityType<? extends MobEntity> entityType, World world, CallbackInfo ci) {
         if (world != null && !world.isClient()) {
             goalSelector.add(3, new FleeEntityGoal<>((PathAwareEntity) (Object) this, PlayerEntity.class, (p) -> {
-                for (Map<Ability, PetData> abilities : ((PixelPetsPlayerExtension) p).getTickingAbilities().values()) {
-                    for (Ability ability : abilities.keySet()) {
+                for (Map<AbilityAction, PetData> abilities : ((PixelPetsPlayerExtension) p).getTickingAbilities().values()) {
+                    for (AbilityAction ability : abilities.keySet()) {
                         if (ability.repels(entityType)) return true;
                     }
                 }

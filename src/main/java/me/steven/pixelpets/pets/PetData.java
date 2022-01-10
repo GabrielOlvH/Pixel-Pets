@@ -1,9 +1,8 @@
-package me.steven.pixelpets.items;
+package me.steven.pixelpets.pets;
 
+import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
-import me.steven.pixelpets.pets.Age;
-import me.steven.pixelpets.pets.PixelPet;
-import me.steven.pixelpets.pets.PixelPets;
+import me.steven.pixelpets.abilities.AbilityAction;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -14,29 +13,31 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 
 public class PetData {
+
+    public static final int AGE_BABY = 0;
+    public static final int AGE_CHILD = 1;
+    public static final int AGE_ADULT = 2;
+
     private Identifier petId;
+    private int variant;
+
     private String nickname;
-    private Age age;
-    private List<Identifier> abilities = new ArrayList<>();
+    private int age;
+    private Map<Identifier, Integer> abilities = new HashMap<>();
     @Nullable
     private Identifier selected;
     private int cooldown;
     private int totalCooldown;
     private int ticksUntilGrow;
-    private int variant;
 
     public PetData(Identifier id) {
         this.petId = id;
-        List<PixelPet.Variant> variants = getPet().getVariants();
-        setVariant(variants.get(ThreadLocalRandom.current().nextInt(variants.size())).getId());
+        setVariant(getPet().getRandomVariant().id());
         setNickname(I18n.translate(getPet().getTranslationKey(getVariant())));
-        setAge(Age.BABY);
+        setAge(AGE_BABY);
         setTicksUntilGrow(1200);
     }
 
@@ -44,7 +45,7 @@ public class PetData {
         this.petId = id;
         setVariant(variant);
         setNickname(I18n.translate(getPet().getTranslationKey(getVariant())));
-        setAge(Age.BABY);
+        setAge(AGE_BABY);
         setTicksUntilGrow(1200);
     }
 
@@ -60,20 +61,24 @@ public class PetData {
         this.nickname = nickname;
     }
 
-    public Age getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(Age age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
-    public List<Identifier> getAbilities() {
+    public Map<Identifier, Integer> getAbilities() {
         return abilities;
     }
 
+    public AbilityAction getCurrentAbilityAction(Identifier id) {
+        return Abilities.REGISTRY.get(id).actions()[abilities.get(id)];
+    }
+
     public void addAbility(Ability ability) {
-        abilities.add(ability.getId());
+        abilities.put(ability.id(), 0);
     }
 
     @Nullable
@@ -124,18 +129,44 @@ public class PetData {
 
     public Text toText() {
         int color = getPet().getColor(variant);
-        MutableText ageText = new LiteralText(" [").append(new TranslatableText("item.pixelpets.pet.age." + getAge().toString().toLowerCase(Locale.ROOT))).append(new LiteralText("]"));
+        MutableText ageText = new LiteralText(" [").append(new TranslatableText(ageToString(age))).append(new LiteralText("]"));
         return new LiteralText(nickname).setStyle(Style.EMPTY.withColor(TextColor.fromRgb(color))).append(ageText.formatted(Formatting.DARK_GRAY));
+    }
+
+    @Nullable
+    public Ability selectNextAbility(ItemStack stack) {
+        if (this.getAbilities().isEmpty()) return null;
+        Identifier selected = this.getSelected();
+        List<Identifier> identifiers = new ArrayList<>(getAbilities().keySet());
+        int next = identifiers.indexOf(selected) + 1;
+        if (next >= this.getAbilities().size()) {
+            next = 0;
+        }
+        this.setSelected(identifiers.get(next));
+        stack.setSubNbt("PetData", this.toTag());
+        return Abilities.REGISTRY.get(this.getSelected());
+    }
+
+
+    @Nullable
+    public AbilityAction getSelectedAbility() {
+        if (this.getAbilities().isEmpty() || this.getSelected() == null) return null;
+        return Abilities.REGISTRY.get(this.getSelected()).actions()[abilities.get(selected)];
     }
 
     public NbtCompound toTag() {
         NbtCompound tag = new NbtCompound();
         tag.putString("PetId", petId.toString());
         tag.putString("Nickname", nickname);
-        tag.putInt("Age", age.ordinal());
+        tag.putInt("Age", age);
         tag.putInt("TicksUntilGrow", ticksUntilGrow);
         NbtList abilitiesTag = new NbtList();
-        abilities.forEach((ability) -> abilitiesTag.add(NbtString.of(ability.toString())));
+        abilities.forEach((ability, level) -> {
+            NbtCompound abilityNbt = new NbtCompound();
+            abilityNbt.putString("Id", ability.toString());
+            abilityNbt.putInt("Level", level);
+            abilitiesTag.add(abilityNbt);
+        });
         tag.put("Abilities", abilitiesTag);
         if (selected != null)
             tag.putString("Selected", selected.toString());
@@ -155,15 +186,29 @@ public class PetData {
             return data;
         data.petId = new Identifier(tag.getString("PetId"));
         data.nickname = tag.getString("Nickname");
-        data.age = Age.values()[tag.getInt("Age")];
+        data.age = tag.getInt("Age");
         data.ticksUntilGrow = tag.getInt("TicksUntilGrow");
-        data.abilities = new ArrayList<>();
-        tag.getList("Abilities", 8).forEach((t) -> data.abilities.add(new Identifier(t.asString())));
+        data.abilities = new HashMap<>();
+        tag.getList("Abilities", 10).forEach((t) -> {
+            NbtCompound abilityNbt = (NbtCompound) t;
+            Identifier id = new Identifier(abilityNbt.getString("Id"));
+            int level = abilityNbt.getInt("Level");
+            data.abilities.put(id, level);
+        });
         if (tag.contains("Selected"))
             data.selected = new Identifier(tag.getString("Selected"));
         data.cooldown = tag.getInt("Cooldown");
         data.totalCooldown = tag.getInt("TotalCooldown");
         data.variant = tag.getInt("Variant");
         return data;
+    }
+    
+    public static String ageToString(int age) {
+        return switch (age) {
+            case AGE_BABY -> "item.pixelpets.pet.age.baby";
+            case AGE_CHILD -> "item.pixelpets.pet.age.child";
+            case AGE_ADULT -> "item.pixelpets.pet.age.adult";
+            default -> "Unknown";
+        };
     }
 }

@@ -2,7 +2,8 @@ package me.steven.pixelpets.items;
 
 import com.mojang.datafixers.util.Pair;
 import me.steven.pixelpets.PixelPetsMod;
-import me.steven.pixelpets.pets.PetData;
+import me.steven.pixelpets.housing.Housing;
+import me.steven.pixelpets.housing.HousingData;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
@@ -24,7 +25,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBakedModel {
+public class HousingBakedModel implements UnbakedModel, BakedModel, FabricBakedModel {
 
     public static ModelTransformation DEFAULT_TRANSFORM = null;
 
@@ -37,15 +38,14 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
 
     @Override
     public void emitBlockQuads(BlockRenderView blockRenderView, BlockState blockState, BlockPos blockPos, Supplier<Random> supplier, RenderContext renderContext) {
-
     }
 
     @Override
     public void emitItemQuads(ItemStack itemStack, Supplier<Random> supplier, RenderContext ctx) {
-        PetData petData = PetData.fromTag(itemStack);
+        HousingData housing = HousingData.fromTag(itemStack);
         Identifier modelId;
-        Identifier id = petData.getPet().getId();
-        modelId = new Identifier(PixelPetsMod.MOD_ID, "pets/" + id.getPath() + "_" + petData.getVariant());
+        Identifier id = housing.getId();
+        modelId = new Identifier(PixelPetsMod.MOD_ID, "housings/" + id.getPath());
         BakedModel model = models.computeIfAbsent(modelId, (i) -> {
             ModelIdentifier modelIdentifier = new ModelIdentifier(new Identifier(modelId.getNamespace(), modelId.getPath()), "inventory");
             return MinecraftClient.getInstance().getBakedModelManager().getModel(modelIdentifier);

@@ -1,8 +1,0 @@
-{
-  "id": "pixelpets:regen_8health",
-  "cooldown": 1200,
-  "rarity": "UNUSUAL",
-  "interact": {
-    "heal": 8
-  }
-}

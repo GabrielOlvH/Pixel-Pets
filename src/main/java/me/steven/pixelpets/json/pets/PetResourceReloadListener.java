@@ -48,16 +48,18 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
             ) {
                 JsonObject result = new JsonParser().parse(reader).getAsJsonObject();
                 Identifier id = new Identifier(result.get("id").getAsString());
+                Identifier housingId = result.has("housing") ? new Identifier(result.get("housing").getAsString()) : null;
                 int color = Integer.decode(result.get("color").getAsString());
-                JsonArray abilitiesArray = result.getAsJsonArray("abilities");
+                JsonObject abilitiesArray = result.getAsJsonObject("abilities");
                 List<Identifier> abilities = new ArrayList<>(abilitiesArray.size());
                 for (int i = 0; i < abilitiesArray.size(); i++) {
                     abilities.add(null);
                 }
-                abilitiesArray.forEach((element) -> {
-                    JsonObject obj = element.getAsJsonObject();
-                    int pos = obj.get("pos").getAsInt();
-                    String abilityId = obj.get("id").getAsString();
+                abilitiesArray.entrySet().forEach((entry) -> {
+                    String key = entry.getKey();
+                    int pos = Integer.parseInt(key);
+                    String abilityId = entry.getValue().getAsString();
+                    if (!Abilities.REGISTRY.containsKey(new Identifier(abilityId))) throw new IllegalArgumentException("Expected ability id but received unknown string '" + abilityId + "'");
                     abilities.set(pos, new Identifier(abilityId));
                 });
                 List<PixelPet.Variant> variants = new ArrayList<>();
@@ -77,7 +79,7 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
                         variants.add(new PixelPet.Variant(index, id, variantColor, translationKey));
                     });
                 }
-                PixelPets.REGISTRY.put(id, new PixelPet(id, color, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
+                PixelPets.REGISTRY.put(id, new PixelPet(id, housingId, color, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
             } catch (IOException e) {
                 LOGGER.error("Unable to load pet from '" + fileId + "'.", e);
             }

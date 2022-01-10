@@ -1,7 +1,7 @@
 package me.steven.pixelpets.mixin;
 
 import me.steven.pixelpets.extensions.PixelPetsDataHolder;
-import me.steven.pixelpets.items.PetData;
+import me.steven.pixelpets.pets.PetData;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;

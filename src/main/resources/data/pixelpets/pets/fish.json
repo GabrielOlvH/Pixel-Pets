@@ -2,14 +2,10 @@
   "id": "pixelpets:fish",
   "color": "0x3da3fc",
   "variants": 3,
-  "abilities": [
-    {
-      "pos": 0,
-      "id": "pixelpets:dolphins_grace"
-    },
-    {
-      "pos": 1,
-      "id": "pixelpets:underwater_air"
-    }
-  ]
+  "housing": "pixelpets:aquarium",
+  "abilities": {
+    "0": "pixelpets:home_sweet_home",
+    "1": "pixelpets:prey",
+    "2": "pixelpets:poseidons_gift"
+  }
 }

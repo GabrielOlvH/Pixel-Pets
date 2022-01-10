@@ -1,8 +1,0 @@
-{
-  "id": "pixelpets:underwater_air",
-  "cooldown": 1200,
-  "rarity": "UNUSUAL",
-  "interact": {
-    "air": 20
-  }
-}

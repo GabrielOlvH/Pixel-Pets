@@ -14,22 +14,9 @@
       "color": "0xdb2143"
     }
   ],
-  "abilities": [
-    {
-      "pos": 0,
-      "id": "pixelpets:saturation_240ticks"
-    },
-    {
-      "pos": 1,
-      "id": "pixelpets:regen_8health"
-    },
-    {
-      "pos": 2,
-      "id": "pixelpets:prey"
-    },
-    {
-      "pos": 3,
-      "id": "pixelpets:extra_4hearts"
-    }
-  ]
+  "abilities": {
+    "0": "pixelpets:saturated",
+    "1": "pixelpets:prey",
+    "2": "pixelpets:lachesis_gift"
+  }
 }

@@ -4,7 +4,9 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.steven.pixelpets.PixelPetsMod;
-import me.steven.pixelpets.items.PetData;
+import me.steven.pixelpets.housing.Housing;
+import me.steven.pixelpets.housing.HousingData;
+import me.steven.pixelpets.pets.PetData;
 import me.steven.pixelpets.pets.PixelPets;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -28,6 +30,15 @@ public class REIPlugin implements REIClientPlugin {
                 stack.setSubNbt("PetData", data.toTag());
                 entryRegistry.addEntries(EntryStacks.of(stack));
             }
+        });
+
+        entryRegistry.removeEntry(EntryStacks.of(new ItemStack(PixelPetsMod.HOUSING_ITEM)));
+
+        Housing.REGISTRY.forEach((id, housing) -> {
+                ItemStack stack = new ItemStack(PixelPetsMod.HOUSING_ITEM);
+                HousingData data = new HousingData(id);
+                stack.setSubNbt("HousingData", data.toNbt());
+                entryRegistry.addEntries(EntryStacks.of(stack));
         });
     }
 }

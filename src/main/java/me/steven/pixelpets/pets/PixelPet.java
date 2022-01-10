@@ -6,17 +6,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class PixelPet {
     private final Identifier id;
+    @Nullable
+    private final Identifier housingId;
     private final String translationKey;
     private final Ability[] abilities;
     private final int color;
     private final List<Variant> variants;
 
-    public PixelPet(Identifier id, int color, List<Variant> variants, Ability... abilities) {
+    public PixelPet(Identifier id, @Nullable Identifier housing, int color, List<Variant> variants, Ability... abilities) {
         this.id = id;
+        this.housingId = housing;
         this.color = color;
         this.translationKey = "pet." + id.getNamespace() + "." + id.getPath();
         this.variants = variants.stream().sorted(Comparator.comparingInt((a) -> a.id)).collect(Collectors.toList());
@@ -25,6 +29,12 @@ public class PixelPet {
 
     public Identifier getId() {
         return id;
+    }
+
+
+    @Nullable
+    public Identifier getHousingId() {
+        return housingId;
     }
 
     public String getTranslationKey() {
@@ -48,40 +58,19 @@ public class PixelPet {
         return variants;
     }
 
+    public Variant getRandomVariant() {
+        return variants.get(ThreadLocalRandom.current().nextInt(variants.size()));
+    }
+
     public String getTranslationKey(int variant) {
         Variant v = variants.get(variant);
         return v.translationKey == null ? translationKey : v.translationKey;
     }
 
-    public static class Variant {
-        private final int id;
-        private final Identifier parentId;
-        private final int color;
-        @Nullable
-        private final String translationKey;
-
-        public Variant(int id, Identifier parentId, int color, @Nullable String translationKey) {
-            this.id = id;
-            this.parentId = parentId;
-            this.color = color;
-            this.translationKey = translationKey;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public Identifier getParentId() {
-            return parentId;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        @Nullable
-        public String getTranslationKey() {
-            return translationKey;
-        }
-    }
+    public record Variant(
+            int id,
+            Identifier parentId,
+            int color,
+            @Nullable String translationKey
+    ) {}
 }

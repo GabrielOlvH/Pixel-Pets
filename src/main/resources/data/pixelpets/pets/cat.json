@@ -2,14 +2,9 @@
   "id": "pixelpets:cat",
   "color": "0xe8b14a",
   "variants": 3,
-  "abilities": [
-    {
-      "pos": 0,
-      "id": "pixelpets:scare_creepers"
-    },
-    {
-      "pos": 1,
-      "id": "pixelpets:speed_300ticks"
-    }
-  ]
+  "abilities": {
+    "0": "pixelpets:feline_agility",
+    "1": "pixelpets:scare_creepers",
+    "2": "pixelpets:atropos_gift"
+  }
 }

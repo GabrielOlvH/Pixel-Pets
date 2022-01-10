@@ -33,8 +33,7 @@ public class AbilityParser {
             throw new NullPointerException("Expected status effect id but received unknown string '" + id + "'.");
         StatusEffect statusEffect = optional.get();
         Optional<Supplier<Integer>> durationOptional = parseIntProvider(object.get("duration"));
-        if (!durationOptional.isPresent()) throw new NullPointerException("No duration!");
-        int duration = durationOptional.get().get();
+        int duration = durationOptional.orElse(() -> 32767).get();
 
         Optional<Supplier<Integer>> amplifierOptional = parseIntProvider(object.get("amplifier"));
         if (!amplifierOptional.isPresent()) throw new NullPointerException("No amplifier!");
@@ -47,6 +46,13 @@ public class AbilityParser {
             Optional<Function<Float, Boolean>> condition = parseFloatCondition(object.get("health"));
             if (condition.isPresent()) {
                 return Optional.of((player) -> condition.get().apply(((LivingEntity) player).getHealth()));
+            }
+        }
+
+        if (object.has("isDead")) {
+            Optional<Supplier<Boolean>> condition = parseBooleanCondition(object.get("isDead"));
+            if (condition.isPresent()) {
+                return Optional.of((player) -> condition.get().get() == ((LivingEntity)player).isDead());
             }
         }
 

@@ -1,0 +1,46 @@
+{
+  "id": "pixelpets:saturated",
+  "actions": {
+    "0": {
+      "cooldown": 1200,
+      "interact": {
+        "effect": {
+          "id": "minecraft:saturation",
+          "duration": 20,
+          "amplifier": 0
+        }
+      }
+    },
+    "1": {
+      "cooldown": 1100,
+      "interact": {
+        "effect": {
+          "id": "minecraft:saturation",
+          "duration": 40,
+          "amplifier": 0
+        }
+      }
+    },
+    "2": {
+      "cooldown": 1000,
+      "interact": {
+        "effect": {
+          "id": "minecraft:saturation",
+          "duration": 60,
+          "amplifier": 0
+        }
+      }
+    },
+    "3": {
+      "cooldown": 900,
+      "interact": {
+        "effect": {
+          "id": "minecraft:saturation",
+          "duration": 80,
+          "amplifier": 0
+        }
+      }
+    }
+  }
+
+}

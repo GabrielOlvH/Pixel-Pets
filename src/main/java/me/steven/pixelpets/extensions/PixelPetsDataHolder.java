@@ -1,6 +1,6 @@
 package me.steven.pixelpets.extensions;
 
-import me.steven.pixelpets.items.PetData;
+import me.steven.pixelpets.pets.PetData;
 import org.jetbrains.annotations.Nullable;
 
 public interface PixelPetsDataHolder {

@@ -1,0 +1,14 @@
+{
+  "id": "pixelpets:lachesis_gift",
+  "actions": {
+    "0": {
+      "attributes": {
+        "uuid": "24fd6d36-496d-11eb-b378-0242ac130002",
+        "id": "minecraft:generic.max_health",
+        "name": "Lachesis' Gift",
+        "value": 20,
+        "operation": "ADDITION"
+      }
+    }
+  }
+}

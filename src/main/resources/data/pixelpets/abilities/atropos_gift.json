@@ -1,0 +1,20 @@
+{
+  "id": "pixelpets:atropos_gift",
+  "actions": {
+    "0": {
+      "cooldown": 4800,
+      "onDamage": {
+        "condition": {
+          "isDead": true
+        },
+        "show_item": "this",
+        "heal": 1,
+        "effect": {
+          "id": "minecraft:absorption",
+          "duration": 900,
+          "amplifier": 2
+        }
+      }
+    }
+  }
+}

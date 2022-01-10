@@ -1,0 +1,41 @@
+{
+  "id": "pixelpets:home_sweet_home",
+  "actions": {
+    "0": {
+      "cooldown": 1200,
+      "interact": {
+        "effect": {
+          "id": "minecraft:dolphins_grace",
+          "duration": 240,
+          "amplifier": 0
+        }
+      }
+    },
+    "1": {
+      "cooldown": 1100,
+      "interact": {
+        "effect": {
+          "id": "minecraft:dolphins_grace",
+          "duration": 360,
+          "amplifier": 0
+        }
+      }
+    },
+    "2": {
+      "cooldown": 1000,
+      "interact": {
+        "effect": {
+          "id": "minecraft:dolphins_grace",
+          "duration": 480,
+          "amplifier": 0
+        }
+      }
+    },
+    "3": {
+      "passiveEffect": {
+        "id": "minecraft:dolphins_grace",
+        "amplifier": 0
+      }
+    }
+  }
+}
