@@ -32,13 +32,13 @@ public class REIPlugin implements REIClientPlugin {
             }
         });
 
-       /* entryRegistry.removeEntry(EntryStacks.of(new ItemStack(PixelPetsMod.HOUSING_ITEM)));
+        entryRegistry.removeEntry(EntryStacks.of(new ItemStack(PixelPetsMod.HOUSING_ITEM)));
 
         Housing.REGISTRY.forEach((id, housing) -> {
                 ItemStack stack = new ItemStack(PixelPetsMod.HOUSING_ITEM);
                 HousingData data = new HousingData(id);
                 stack.setSubNbt("HousingData", data.toNbt());
                 entryRegistry.addEntries(EntryStacks.of(stack));
-        });*/
+        });
     }
 }

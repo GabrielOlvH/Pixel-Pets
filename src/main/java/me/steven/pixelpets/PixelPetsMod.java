@@ -46,9 +46,9 @@ public class PixelPetsMod implements ModInitializer {
             Registry.register(Registries.ITEM, new Identifier(MOD_ID, "nether_egg"), new PixelPetEggItem(new Identifier(MOD_ID, "nether"), 0xcc0000));
 
     public static final Item END_EGG_ITEM =
-            Registry.register(Registries.ITEM, new Identifier(MOD_ID, "the_end_egg"), new PixelPetEggItem(new Identifier(MOD_ID, "the_end"), 0x660066));
+            Registry.register(Registries.ITEM, new Identifier(MOD_ID, "the_end_egg"), new PixelPetEggItem(new Identifier(MOD_ID, "the_end"), 0x660066));*/
     public static final Item HOUSING_ITEM =
-            Registry.register(Registries.ITEM, new Identifier(MOD_ID, "housing"), new HousingItem(new Item.Settings().maxCount(1)));*/
+            Registry.register(Registries.ITEM, new Identifier(MOD_ID, "housing"), new HousingItem(new Item.Settings().maxCount(1)));
 
     @Override
     public void onInitialize() {

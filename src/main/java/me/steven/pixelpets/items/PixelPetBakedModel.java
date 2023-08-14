@@ -48,7 +48,7 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
         PetData petData = PetData.fromTag(itemStack);
         Identifier modelId;
         Identifier id = petData.getPet().getId();
-        modelId = new Identifier(PixelPetsMod.MOD_ID, "pets/" + id.getPath() + "_" + petData.getVariant());
+        modelId = new Identifier(PixelPetsMod.MOD_ID, "pets/" + id.getPath() + "_" + (petData.getVariant() + 1));
         BakedModel model = models.computeIfAbsent(modelId, (i) -> {
             ModelIdentifier modelIdentifier = new ModelIdentifier(new Identifier(modelId.getNamespace(), modelId.getPath()), "inventory");
             return MinecraftClient.getInstance().getBakedModelManager().getModel(modelIdentifier);

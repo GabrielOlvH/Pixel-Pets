@@ -2,7 +2,8 @@
   "id": "pixelpets:cat",
   "eggGroup": "pixelpets:overworld",
   "color": "0xe8b14a",
-  "variants": 3,
+  "housing": "pixelpets:pen",
+  "variants": 4,
   "abilities": {
     "0": "pixelpets:feline_agility",
     "1": "pixelpets:scare_creepers",

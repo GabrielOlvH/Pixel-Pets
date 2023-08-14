@@ -44,15 +44,15 @@ public class HousingBakedModel implements UnbakedModel, BakedModel, FabricBakedM
     @Override
     public void emitItemQuads(ItemStack itemStack, Supplier<Random> supplier, RenderContext ctx) {
         HousingData housing = HousingData.fromTag(itemStack);
-        Identifier modelId;
         Identifier id = housing.getId();
-        modelId = new Identifier(PixelPetsMod.MOD_ID, "housings/" + id.getPath());
+        Identifier modelId = new Identifier(PixelPetsMod.MOD_ID, "housings/" + id.getPath() + (housing.getStoredPets().isEmpty() ? "" : "_full"));
         BakedModel model = models.computeIfAbsent(modelId, (i) -> {
             ModelIdentifier modelIdentifier = new ModelIdentifier(new Identifier(modelId.getNamespace(), modelId.getPath()), "inventory");
             return MinecraftClient.getInstance().getBakedModelManager().getModel(modelIdentifier);
         });
         if (model != null)
-            ctx.fallbackConsumer().accept(model);
+            model.emitItemQuads(itemStack, supplier, ctx);
+
     }
 
     @Override

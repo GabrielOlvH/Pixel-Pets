@@ -2,7 +2,7 @@
   "id": "pixelpets:fish",
   "eggGroup": "pixelpets:overworld",
   "color": "0x3da3fc",
-  "variants": 3,
+  "variants": 6,
   "housing": "pixelpets:aquarium",
   "abilities": {
     "0": "pixelpets:home_sweet_home",

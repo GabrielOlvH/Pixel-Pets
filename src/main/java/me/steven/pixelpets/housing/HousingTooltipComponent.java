@@ -46,7 +46,7 @@ public record HousingTooltipComponent(HousingTooltipData data) implements Toolti
         for (PetData petData : data.housingData().getStoredPets()) {
             ItemStack stack = new ItemStack(PixelPetsMod.PET_ITEM);
             stack.setSubNbt(PetData.PET_DATA_ID, petData.toTag());
-            context.drawItemInSlot(textRenderer, stack, x, y + i * 18);
+            context.drawItem(stack, x, y + i * 18);
             i++;
         }
 

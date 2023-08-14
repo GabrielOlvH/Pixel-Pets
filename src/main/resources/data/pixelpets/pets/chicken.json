@@ -2,7 +2,8 @@
   "id": "pixelpets:chicken",
   "eggGroup": "pixelpets:overworld",
   "color": "0xe8b14a",
-  "variants": 3,
+  "housing": "pixelpets:nest",
+  "variants": 5,
   "abilities": {
     "0": "pixelpets:lightweight",
     "1": "pixelpets:prey",

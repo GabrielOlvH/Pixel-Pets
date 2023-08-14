@@ -68,12 +68,12 @@ public class PixelPetsModClient implements ClientModInitializer {
             return 0.0f;
         });
 
-        /*TooltipComponentCallback.EVENT.register(data -> {
+        TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof HousingTooltipData housingData)
                 return new HousingTooltipComponent(housingData);
             else
                 return null;
-        });*/
+        });
 
         ClientPlayNetworking.registerGlobalReceiver(PixelPetsMod.SHOW_ITEM_PACKET, (client, handler, buf, responseSender) -> {
             ItemStack itemStack = buf.readItemStack();

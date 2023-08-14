@@ -1,0 +1,6 @@
+{
+  "parent": "pixelpets:item/pet_base",
+  "textures": {
+    "layer0": "pixelpets:item/pets/chicken_4"
+  }
+}

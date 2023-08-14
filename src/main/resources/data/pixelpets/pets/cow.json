@@ -2,6 +2,7 @@
   "id": "pixelpets:cow",
   "eggGroup": "pixelpets:overworld",
   "color": "0x400e0e",
+  "housing": "pixelpets:pen",
   "variants": [
     {
       "index": 0
@@ -10,9 +11,22 @@
       "index": 1
     },
     {
-      "index": 2,
+      "index": 2
+    },
+    {
+      "index": 3,
       "translationKey": "pet.pixelpets.cow.mushroom",
       "color": "0xdb2143"
+    },
+    {
+      "index": 4,
+      "translationKey": "pet.pixelpets.cow.moobloom",
+      "color": "0xdbcf21"
+    },
+    {
+      "index": 5,
+      "translationKey": "pet.pixelpets.cow.cactus",
+      "color": "0x27db21"
     }
   ],
   "abilities": {

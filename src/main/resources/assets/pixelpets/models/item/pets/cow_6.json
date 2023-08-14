@@ -1,6 +1,6 @@
 {
   "parent": "pixelpets:item/pet_base",
   "textures": {
-    "layer0": "pixelpets:item/pets/cat_0"
+    "layer0": "pixelpets:item/pets/cow_6"
   }
 }

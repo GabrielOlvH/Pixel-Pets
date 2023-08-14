@@ -22,5 +22,11 @@ public class AbilityRerollItem extends Item {
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         tooltip.add(Text.translatable("item.pixelpets.ability_reroll.tooltip1").formatted(Formatting.YELLOW, Formatting.ITALIC));
         tooltip.add(Text.translatable("item.pixelpets.ability_reroll.tooltip2").formatted(Formatting.YELLOW, Formatting.ITALIC));
+        tooltip.add(Text.translatable("item.pixelpets.ability_reroll.tooltip3").formatted(Formatting.YELLOW, Formatting.ITALIC));
+    }
+
+    @Override
+    public boolean hasGlint(ItemStack stack) {
+        return true;
     }
 }
