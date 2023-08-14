@@ -1,9 +1,7 @@
 {
   "id": "pixelpets:scare_creepers",
-  "actions": {
-    "0": {
-      "cooldown": 0,
-      "repels": "minecraft:creeper"
-    }
+  "action": {
+    "cooldown": 0,
+    "repels": "minecraft:creeper"
   }
 }

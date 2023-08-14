@@ -1,11 +1,9 @@
 {
   "id": "pixelpets:poseidons_gift",
-  "actions": {
-    "0": {
-      "passiveEffect": {
-        "id": "minecraft:water_breathing",
-        "amplifier": 0
-      }
+  "action": {
+    "passiveEffect": {
+      "id": "minecraft:water_breathing",
+      "amplifier": 0
     }
   }
 }

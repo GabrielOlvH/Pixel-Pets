@@ -40,15 +40,16 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
 
     @Override
     public void reload(ResourceManager manager) {
-        Collection<Identifier> pets = manager.findResources("pets", (r) -> r.endsWith(".json") || r.endsWith(".json5"));
+        Collection<Identifier> pets = manager.findResources("pets", (r) -> r.toString().endsWith(".json") || r.toString().endsWith(".json5")).keySet();
         for (Identifier fileId : pets) {
             try (
-                    InputStream is = manager.getResource(fileId).getInputStream();
+                    InputStream is = manager.getResource(fileId).get().getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is))
             ) {
                 JsonObject result = new JsonParser().parse(reader).getAsJsonObject();
                 Identifier id = new Identifier(result.get("id").getAsString());
                 Identifier housingId = result.has("housing") ? new Identifier(result.get("housing").getAsString()) : null;
+                Identifier eggGroupId = result.has("eggGroup") ? new Identifier(result.get("eggGroup").getAsString()) : null;
                 int color = Integer.decode(result.get("color").getAsString());
                 JsonObject abilitiesArray = result.getAsJsonObject("abilities");
                 List<Identifier> abilities = new ArrayList<>(abilitiesArray.size());
@@ -79,7 +80,7 @@ public class PetResourceReloadListener implements SimpleSynchronousResourceReloa
                         variants.add(new PixelPet.Variant(index, id, variantColor, translationKey));
                     });
                 }
-                PixelPets.REGISTRY.put(id, new PixelPet(id, housingId, color, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
+                PixelPets.REGISTRY.put(id, new PixelPet(id, eggGroupId, housingId, color, variants, abilities.stream().map(Abilities.REGISTRY::get).toArray(Ability[]::new)));
             } catch (IOException e) {
                 LOGGER.error("Unable to load pet from '" + fileId + "'.", e);
             }

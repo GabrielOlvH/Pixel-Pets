@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "pixelpets:item/egg_hatching_2"
-  }
-}

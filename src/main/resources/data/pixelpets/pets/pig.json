@@ -1,5 +1,6 @@
 {
   "id": "pixelpets:pig",
+  "eggGroup": "pixelpets:overworld",
   "color": "0xde78be",
   "variants": 3,
   "abilities": {

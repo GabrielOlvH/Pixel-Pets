@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinHeldItemRenderer {
     @Redirect(method = "updateHeldItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;areEqual(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z"))
     private boolean areStacksEqual(ItemStack original, ItemStack updated) {
-        if (updated.getItem().equals(original.getItem()) && (updated.getItem().equals(PixelPetsMod.PET_ITEM) || updated.getItem().equals(PixelPetsMod.EGG_ITEM) )) {
+        if (updated.getItem().equals(original.getItem()) && (updated.getItem().equals(PixelPetsMod.PET_ITEM) || updated.getItem().equals(PixelPetsMod.OVERWORLD_EGG_ITEM) )) {
             return true;
         }
 

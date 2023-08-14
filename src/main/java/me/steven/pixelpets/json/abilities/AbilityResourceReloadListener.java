@@ -43,80 +43,68 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
 
     @Override
     public void reload(ResourceManager manager) {
-        Collection<Identifier> abilities = manager.findResources("abilities", (r) -> r.endsWith(".json") || r.endsWith(".json5"));
-        for (Identifier fileId : abilities) {
+        Collection<Identifier> pets = manager.findResources("abilities", (r) -> r.toString().endsWith(".json") || r.toString().endsWith(".json5")).keySet();
+        for (Identifier fileId : pets) {
             try (
-                    InputStream is = manager.getResource(fileId).getInputStream();
+                    InputStream is = manager.getResource(fileId).get().getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is))
             ) {
                 JsonObject result = new JsonParser().parse(reader).getAsJsonObject();
                 Identifier id = new Identifier(result.get("id").getAsString());
-                JsonObject actions = result.getAsJsonObject("actions");
-                List<AbilityAction> actionList = new ArrayList<>();
-                actions.entrySet().forEach(entry -> {
-                    String key = entry.getKey();
-                    int index = Integer.parseInt(key);
-                    fillIfNeeded(actionList, index);
+                JsonObject action = result.getAsJsonObject("action");
+                int cooldown = action.has("cooldown") ? action.get("cooldown").getAsInt() : 0;
+                Optional<AbilityContext> tick = AbilitySupplierParser.parse(action.has("tick") ? action.get("tick").getAsJsonObject() : null);
+                Optional<AbilityContext> interact = AbilitySupplierParser.parse(action.has("interact") ? action.get("interact").getAsJsonObject() : null);
+                Optional<AbilityContext> onDamaged = AbilitySupplierParser.parse(action.has("onDamage") ? action.get("onDamage").getAsJsonObject() : null);
+                Multimap<EntityAttribute, EntityAttributeModifier> attributes = EntityAttributeParser.parse(action.get("attributes"));
+                Optional<Function<EntityType<?>, Boolean>> repels = AbilityParser.parseEntityType(action.get("repels"));
+                Optional<Supplier<StatusEffectInstance>> passiveEffect = action.has("passiveEffect") ? AbilityParser.parseStatusEffect(action.getAsJsonObject("passiveEffect")) : Optional.empty();
+                AbilityAction a = new AbilityAction() {
 
-                    JsonObject action = entry.getValue().getAsJsonObject();
-                    int cooldown = action.has("cooldown") ? action.get("cooldown").getAsInt() : 0;
-                    Optional<AbilityContext> tick = AbilitySupplierParser.parse(action.has("tick") ? action.get("tick").getAsJsonObject() : null);
-                    Optional<AbilityContext> interact = AbilitySupplierParser.parse(action.has("interact") ? action.get("interact").getAsJsonObject() : null);
-                    Optional<AbilityContext> onDamaged = AbilitySupplierParser.parse(action.has("onDamage") ? action.get("onDamage").getAsJsonObject() : null);
-                    Multimap<EntityAttribute, EntityAttributeModifier> attributes = EntityAttributeParser.parse(action.get("attributes"));
-                    Optional<Function<EntityType<?>, Boolean>> repels = AbilityParser.parseEntityType(action.get("repels"));
-                    Optional<Supplier<StatusEffectInstance>> passiveEffect = action.has("passiveEffect") ? AbilityParser.parseStatusEffect(action.getAsJsonObject("passiveEffect")) : Optional.empty();
-                    actionList.set(index, new AbilityAction() {
+                    @Override
+                    public int getCooldown() {
+                        return cooldown;
+                    }
 
-                        @Override
-                        public int getCooldown() {
-                            return cooldown;
-                        }
+                    @Override
+                    public boolean onInteract(PetData petData, World world, LivingEntity entity) {
+                        return interact.isPresent() && interact.get().test(petData, world, entity);
+                    }
 
-                        @Override
-                        public boolean onInteract(PetData petData, World world, LivingEntity entity) {
-                            return interact.isPresent() && interact.get().test(petData, world, entity);
-                        }
+                    @Override
+                    public boolean inventoryTick(PetData petData, World world, LivingEntity entity) {
+                        return tick.isPresent() && tick.get().test(petData, world, entity);
+                    }
 
-                        @Override
-                        public boolean inventoryTick(PetData petData, World world, LivingEntity entity) {
-                            return tick.isPresent() && tick.get().test(petData, world, entity);
-                        }
+                    @Override
+                    public @Nullable StatusEffectInstance getPassiveEffect(World world, LivingEntity entity) {
+                        return passiveEffect.map(Supplier::get).orElse(null);
+                    }
 
-                        @Override
-                        public @Nullable StatusEffectInstance getPassiveEffect(World world, LivingEntity entity) {
-                            return passiveEffect.map(Supplier::get).orElse(null);
-                        }
+                    @Override
+                    public boolean onDamaged(PetData petData, World world, LivingEntity entity) {
+                        return onDamaged.isPresent() && onDamaged.get().test(petData, world, entity);
+                    }
 
-                        @Override
-                        public boolean onDamaged(PetData petData, World world, LivingEntity entity) {
-                            return onDamaged.isPresent() && onDamaged.get().test(petData, world, entity);
-                        }
+                    @Override
+                    public @NotNull Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers() {
+                        return attributes;
+                    }
 
-                        @Override
-                        public @NotNull Multimap<EntityAttribute, EntityAttributeModifier> getEntityAttributeModifiers() {
-                            return attributes;
-                        }
+                    @Override
+                    public boolean repels(EntityType<?> type) {
+                        return repels.isPresent() && repels.get().apply(type);
+                    }
 
-                        @Override
-                        public boolean repels(EntityType<?> type) {
-                            return repels.isPresent() && repels.get().apply(type);
-                        }
-                    });
-                });
-                Ability ability = new Ability(id, actionList.toArray(AbilityAction[]::new));
+                    ;
+                };
+                Ability ability = new Ability(id, a);
 
                 Abilities.REGISTRY.put(id, ability);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOGGER.error("Unable to load ability from '" + fileId + "'.", e);
             }
         }
         LOGGER.info("Loaded " + Abilities.REGISTRY.size() + " abilities!");
-    }
-
-    private static void fillIfNeeded(List<AbilityAction> actions, int index) {
-        while (actions.size() <= index) {
-            actions.add(null);
-        }
     }
 }

@@ -11,7 +11,7 @@ import me.steven.pixelpets.abilities.Abilities;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.suggestion.SuggestionProviders;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -20,14 +20,10 @@ import java.util.Collection;
 
 public class AbilityArgumentType implements ArgumentType<Identifier> {
 
-    public static final SuggestionProvider<ServerCommandSource> ABILITIES = SuggestionProviders.register(new Identifier(PixelPetsMod.MOD_ID, "abilities"), (context, builder) -> {
-        return CommandSource.suggestFromIdentifier(Abilities.REGISTRY.values(), builder, Abilities.REGISTRY.inverse()::get, (ability) -> {
-            return new TranslatableText(Util.createTranslationKey("ability", Abilities.REGISTRY.inverse().get(ability)));
-        });
-    });
+    public static final SuggestionProvider<ServerCommandSource> ABILITIES = SuggestionProviders.register(new Identifier(PixelPetsMod.MOD_ID, "abilities"), (context, builder) -> CommandSource.suggestFromIdentifier(Abilities.REGISTRY.values(), builder, Abilities.REGISTRY.inverse()::get, (ability) -> Text.literal(Util.createTranslationKey("ability", Abilities.REGISTRY.inverse().get(ability)))));
 
     private static final Collection<String> EXAMPLES = Arrays.asList("minecraft:pig", "cow");
-    public static final DynamicCommandExceptionType NOT_FOUND_EXCEPTION = new DynamicCommandExceptionType((id) -> new TranslatableText("entity.notFound", id));
+    public static final DynamicCommandExceptionType NOT_FOUND_EXCEPTION = new DynamicCommandExceptionType((id) -> Text.translatable("entity.notFound", id));
 
     public AbilityArgumentType() {
     }

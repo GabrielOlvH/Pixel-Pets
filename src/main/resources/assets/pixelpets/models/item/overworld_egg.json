@@ -1,26 +1,26 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "pixelpets:item/egg"
+    "layer0": "pixelpets:item/overworld_egg"
   },
   "overrides": [
     {
       "predicate": {
         "pixelpets:hatching": 0.1
       },
-      "model": "pixelpets:item/egg_hatching_0"
+      "model": "pixelpets:item/overworld_egg_hatching_0"
     },
     {
       "predicate": {
         "pixelpets:hatching": 0.2
       },
-      "model": "pixelpets:item/egg_hatching_1"
+      "model": "pixelpets:item/overworld_egg_hatching_1"
     },
     {
       "predicate": {
         "pixelpets:hatching": 0.3
       },
-      "model": "pixelpets:item/egg_hatching_2"
+      "model": "pixelpets:item/overworld_egg_hatching_2"
     }
   ]
 }

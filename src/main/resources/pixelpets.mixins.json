@@ -4,6 +4,7 @@
   "package": "me.steven.pixelpets.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AccessorPlayerEntity",
     "MixinEntityStatusEffectS2CPacket",
     "MixinLivingEntity",
     "MixinPathAwareEntity",

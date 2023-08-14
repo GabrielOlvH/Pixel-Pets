@@ -27,10 +27,10 @@ public class HousingResourceReloadListener implements SimpleSynchronousResourceR
 
     @Override
     public void reload(ResourceManager manager) {
-        Collection<Identifier> pets = manager.findResources("housing", (r) -> r.endsWith(".json") || r.endsWith(".json5"));
+        Collection<Identifier> pets = manager.findResources("housing", (r) -> r.toString().endsWith(".json") || r.toString().endsWith(".json5")).keySet();
         for (Identifier fileId : pets) {
             try (
-                    InputStream is = manager.getResource(fileId).getInputStream();
+                    InputStream is = manager.getResource(fileId).get().getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(is))
             ) {
                 JsonObject result = new JsonParser().parse(reader).getAsJsonObject();

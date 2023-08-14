@@ -78,7 +78,7 @@ public class AbilitySupplierParser {
                         ItemStack stack = finalStackProvider.get().get();
                         if (stack.isEmpty()) {
                             stack = new ItemStack(PixelPetsMod.PET_ITEM);
-                            stack.setSubNbt("PetData", petData.toTag());
+                            petData.update(stack);
                         }
                         buf.writeItemStack(stack);
                         ServerPlayNetworking.send(player, PixelPetsMod.SHOW_ITEM_PACKET, buf);

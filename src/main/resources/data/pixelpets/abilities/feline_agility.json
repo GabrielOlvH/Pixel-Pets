@@ -1,42 +1,13 @@
 {
   "id": "pixelpets:feline_agility",
-  "actions": {
-    "0": {
-      "cooldown": 1200,
-      "interact": {
-        "effect": {
-          "id": "minecraft:speed",
-          "duration": 240,
-          "amplifier": 0
-        }
-      }
-    },
-    "1": {
-      "cooldown": 1100,
-      "interact": {
-        "effect": {
-          "id": "minecraft:speed",
-          "duration": 360,
-          "amplifier": 0
-        }
-      }
-    },
-    "2": {
-      "cooldown": 1000,
-      "interact": {
-        "effect": {
-          "id": "minecraft:speed",
-          "duration": 480,
-          "amplifier": 0
-        }
-      }
-    },
-    "3": {
-      "passiveEffect": {
+  "action": {
+    "cooldown": 1200,
+    "interact": {
+      "effect": {
         "id": "minecraft:speed",
+        "duration": 300,
         "amplifier": 0
       }
     }
   }
-
 }

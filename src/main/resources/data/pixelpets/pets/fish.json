@@ -1,5 +1,6 @@
 {
   "id": "pixelpets:fish",
+  "eggGroup": "pixelpets:overworld",
   "color": "0x3da3fc",
   "variants": 3,
   "housing": "pixelpets:aquarium",

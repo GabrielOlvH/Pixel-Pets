@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
 import org.jetbrains.annotations.Nullable;
 
@@ -106,13 +107,13 @@ public class HousingBakedModel implements UnbakedModel, BakedModel, FabricBakedM
     }
 
     @Override
-    public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
-        return Collections.emptyList();
+    public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
+
     }
 
     @Nullable
     @Override
-    public BakedModel bake(ModelLoader loader, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
+    public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
         return this;
     }
 }

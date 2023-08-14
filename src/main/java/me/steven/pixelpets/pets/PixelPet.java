@@ -12,14 +12,17 @@ import java.util.stream.Collectors;
 public class PixelPet {
     private final Identifier id;
     @Nullable
+    private final Identifier eggGroupId;
+    @Nullable
     private final Identifier housingId;
     private final String translationKey;
     private final Ability[] abilities;
     private final int color;
     private final List<Variant> variants;
 
-    public PixelPet(Identifier id, @Nullable Identifier housing, int color, List<Variant> variants, Ability... abilities) {
+    public PixelPet(Identifier id, @Nullable Identifier eggGroupId, @Nullable Identifier housing, int color, List<Variant> variants, Ability... abilities) {
         this.id = id;
+        this.eggGroupId = eggGroupId;
         this.housingId = housing;
         this.color = color;
         this.translationKey = "pet." + id.getNamespace() + "." + id.getPath();
@@ -31,6 +34,10 @@ public class PixelPet {
         return id;
     }
 
+    @Nullable
+    public Identifier getEggGroupId() {
+        return eggGroupId;
+    }
 
     @Nullable
     public Identifier getHousingId() {

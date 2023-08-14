@@ -14,10 +14,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.registry.Registry;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 public class AbilityParser {
     public static Optional<Supplier<StatusEffectInstance>> parseStatusEffect(JsonObject object) {
         String id = object.get("id").getAsString();
-        Optional<StatusEffect> optional = Registry.STATUS_EFFECT.getOrEmpty(new Identifier(id));
+        Optional<StatusEffect> optional = Registries.STATUS_EFFECT.getOrEmpty(new Identifier(id));
         if (!optional.isPresent())
             throw new NullPointerException("Expected status effect id but received unknown string '" + id + "'.");
         StatusEffect statusEffect = optional.get();
@@ -38,7 +38,11 @@ public class AbilityParser {
         Optional<Supplier<Integer>> amplifierOptional = parseIntProvider(object.get("amplifier"));
         if (!amplifierOptional.isPresent()) throw new NullPointerException("No amplifier!");
         int amplifier = amplifierOptional.get().get();
-        return Optional.of(() -> new StatusEffectInstance(statusEffect, duration, amplifier));
+        return Optional.of(() -> {
+            StatusEffectInstance effect = new StatusEffectInstance(statusEffect, duration, amplifier, false, false, true);
+            if (duration == 32767); // TODO effect.setPermanent(true);
+            return effect;
+        });
     }
 
     public static Optional<Function<Entity, Boolean>> parseEntityCondition(JsonObject object) {
@@ -74,7 +78,7 @@ public class AbilityParser {
             int inRadius = object.get("isNearHostiles").getAsInt();
             return Optional.of((obj) -> {
                 LivingEntity player = (LivingEntity) obj;
-                return !player.world.getEntitiesByClass(HostileEntity.class, new Box(player.getBlockPos()).expand(inRadius), (e) -> true).isEmpty();
+                return !player.getWorld().getEntitiesByClass(HostileEntity.class, new Box(player.getBlockPos()).expand(inRadius), (e) -> true).isEmpty();
             });
         }
 
@@ -104,7 +108,7 @@ public class AbilityParser {
 
         if (object.has("hasStatusEffect")) {
             String effectId = object.get("hasStatusEffect").getAsString();
-            Optional<StatusEffect> effect = Registry.STATUS_EFFECT.getOrEmpty(new Identifier(effectId));
+            Optional<StatusEffect> effect = Registries.STATUS_EFFECT.getOrEmpty(new Identifier(effectId));
             return Optional.of((obj) -> {
                 LivingEntity player = (LivingEntity) obj;
                 return effect.isPresent() && player.hasStatusEffect(effect.get());
@@ -158,14 +162,14 @@ public class AbilityParser {
             Set<Identifier> types = new HashSet<>();
             object.getAsJsonArray().forEach((e) -> {
                 Identifier id = new Identifier(e.getAsString());
-                Optional<EntityType<?>> optional = Registry.ENTITY_TYPE.getOrEmpty(id);
+                Optional<EntityType<?>> optional = Registries.ENTITY_TYPE.getOrEmpty(id);
                 if (!optional.isPresent()) throw new NullPointerException("Expected entity type but received unknown string '" + e.getAsString() + "'.");
                 types.add(id);
             });
-            return Optional.of((t) -> types.contains(Registry.ENTITY_TYPE.getId((EntityType<?>) t)));
+            return Optional.of((t) -> types.contains(Registries.ENTITY_TYPE.getId((EntityType<?>) t)));
         } else {
             Identifier id = new Identifier(object.getAsString());
-            Optional<EntityType<?>> optional = Registry.ENTITY_TYPE.getOrEmpty(id);
+            Optional<EntityType<?>> optional = Registries.ENTITY_TYPE.getOrEmpty(id);
             if (!optional.isPresent()) throw new NullPointerException("Expected entity type but received unknown string '" + object.getAsString() + "'.");
             return Optional.of((t) -> t == optional.get());
         }
@@ -173,7 +177,7 @@ public class AbilityParser {
 
     public static Optional<Supplier<ItemStack>> parseStackProvider(JsonObject object) {
         Identifier id = new Identifier(object.get("id").getAsString());
-        Item item = Registry.ITEM.get(id);
+        Item item = Registries.ITEM.get(id);
         Optional<Supplier<Integer>> countProvider = parseIntProvider(object.get("count"));
         int count = countProvider.orElse(() -> 1).get();
         NbtCompound nbt = new NbtCompound();

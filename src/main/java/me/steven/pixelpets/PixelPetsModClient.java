@@ -4,16 +4,20 @@ import me.steven.pixelpets.housing.HousingTooltipComponent;
 import me.steven.pixelpets.housing.HousingTooltipData;
 import me.steven.pixelpets.items.HousingBakedModel;
 import me.steven.pixelpets.items.PixelPetBakedModel;
+import me.steven.pixelpets.items.PixelPetEggItem;
 import me.steven.pixelpets.pets.PixelPets;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
+import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.util.ModelIdentifier;
+import net.minecraft.item.EggItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.util.Collection;
@@ -21,52 +25,55 @@ import java.util.Collection;
 public class PixelPetsModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ModelLoadingRegistry.INSTANCE.registerAppender((manager, consumer) -> {
-            consumer.accept(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"));
-            Collection<Identifier> pets = manager.findResources("models/item/pets", (r) -> r.endsWith(".json"));
+        ModelLoadingPlugin.register(ctx -> {
+            ResourceManager manager = MinecraftClient.getInstance().getResourceManager();
+            Collection<Identifier> pets = manager.findResources("models/item/pets", (r) -> r.toString().endsWith(".json")).keySet();
+            ctx.addModels(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"));
             for (Identifier fileId : pets) {
-                ModelIdentifier id = new ModelIdentifier(fileId.toString().replace("models/item/", "").replace(".json", ""), "inventory");
-                consumer.accept(id);
+                ModelIdentifier id = new ModelIdentifier(new Identifier(fileId.toString().replace("models/item/", "").replace(".json", "")), "inventory");
+                ctx.addModels(id);
                 PixelPets.MODEL_IDENTIFIERS.add(id);
             }
 
-            Collection<Identifier> housings = manager.findResources("models/item/housings", (r) -> r.endsWith(".json"));
+            Collection<Identifier> housings = manager.findResources("models/item/housings", (r) -> r.toString().endsWith(".json")).keySet();
             for (Identifier fileId : housings) {
-                ModelIdentifier id = new ModelIdentifier(fileId.toString().replace("models/item/", "").replace(".json", ""), "inventory");
-                consumer.accept(id);
+                ModelIdentifier id = new ModelIdentifier(new Identifier(fileId.toString().replace("models/item/", "").replace(".json", "")), "inventory");
+                ctx.addModels(id);
             }
+
+
+            ctx.modifyModelBeforeBake().register((model, context) -> {
+                Identifier modelId = context.id();
+                if (!modelId.getNamespace().equals(PixelPetsMod.MOD_ID))
+                    return model;
+                else if (modelId.getPath().equals("pet"))
+                    return new PixelPetBakedModel();
+                else if (modelId.getPath().equals("housing"))
+                    return new HousingBakedModel();
+                else
+                    return model;
+            });
         });
 
-        ModelLoadingRegistry.INSTANCE.registerVariantProvider((manager) -> (modelId, modelProviderContext) -> {
-            if (!modelId.getNamespace().equals(PixelPetsMod.MOD_ID))
-                return null;
-            else if (modelId.getPath().equals("pet"))
-                return new PixelPetBakedModel();
-            else if (modelId.getPath().equals("housing"))
-                return new HousingBakedModel();
-            else
-                return null;
-        });
-
-        FabricModelPredicateProviderRegistry.register(PixelPetsMod.EGG_ITEM, new Identifier(PixelPetsMod.MOD_ID, "hatching"), (stack, world, entity, a) -> {
+        ModelPredicateProviderRegistry.register(PixelPetsMod.OVERWORLD_EGG_ITEM, new Identifier(PixelPetsMod.MOD_ID, "hatching"), (stack, world, entity, a) -> {
             NbtCompound nbt = stack.getNbt();
-            if (nbt == null || !nbt.contains("hatching")) return 0.3f;
-            int hatching = nbt.getInt("hatching");
-            if (hatching < 50)
+            if (nbt == null || !nbt.contains(PixelPetEggItem.HATCH_TICKS)) return 0.0f;
+            float hatching = nbt.getInt(PixelPetEggItem.HATCH_TICKS) / (float) PixelPetEggItem.TOTAL_HATCH_TIME;
+            if (hatching < 0.1)
                 return 0.3f;
-            else if (hatching < 100)
+            else if (hatching < 0.2)
                 return 0.2f;
-            else if (hatching < 230)
+            else if (hatching < 0.3)
                 return 0.1f;
             return 0.0f;
         });
 
-        TooltipComponentCallback.EVENT.register(data -> {
+        /*TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof HousingTooltipData housingData)
                 return new HousingTooltipComponent(housingData);
             else
                 return null;
-        });
+        });*/
 
         ClientPlayNetworking.registerGlobalReceiver(PixelPetsMod.SHOW_ITEM_PACKET, (client, handler, buf, responseSender) -> {
             ItemStack itemStack = buf.readItemStack();

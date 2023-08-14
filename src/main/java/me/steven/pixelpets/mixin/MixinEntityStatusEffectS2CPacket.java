@@ -28,7 +28,7 @@ public class MixinEntityStatusEffectS2CPacket implements PixelPetsDataHolder {
         if (hasProvider) {
             NbtCompound compoundTag = buf.readNbt();
             if (compoundTag != null)
-                this.petProvider = PetData.fromTag(compoundTag.getCompound("PetData"));
+                this.petProvider = PetData.fromTag(compoundTag.getCompound(PetData.PET_DATA_ID));
         }
     }
 
@@ -37,7 +37,7 @@ public class MixinEntityStatusEffectS2CPacket implements PixelPetsDataHolder {
         buf.writeBoolean(petProvider != null);
         if (petProvider != null) {
             NbtCompound tag = new NbtCompound();
-            tag.put("PetData", petProvider.toTag());
+            tag.put(PetData.PET_DATA_ID, petProvider.toTag());
             buf.writeNbt(tag);
         }
     }

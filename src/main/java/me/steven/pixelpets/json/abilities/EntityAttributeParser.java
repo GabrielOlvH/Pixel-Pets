@@ -8,10 +8,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Pair;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +36,7 @@ public class EntityAttributeParser {
 
     private static Pair<EntityAttribute, EntityAttributeModifier> parse(JsonObject object) {
         Identifier id = new Identifier(object.get("id").getAsString());
-        Optional<EntityAttribute> attributeOptional = Registry.ATTRIBUTE.getOrEmpty(id);
+        Optional<EntityAttribute> attributeOptional = Registries.ATTRIBUTE.getOrEmpty(id);
         if (!attributeOptional.isPresent())
             throw new NullPointerException("Expected entity attribute id but received unknown string '" + id + "' instead.");
         UUID uuid = UUID.fromString(JsonHelper.getString(object, "uuid", UUID.randomUUID().toString()));

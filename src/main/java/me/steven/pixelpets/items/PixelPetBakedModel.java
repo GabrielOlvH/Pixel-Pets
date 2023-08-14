@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,7 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
             return MinecraftClient.getInstance().getBakedModelManager().getModel(modelIdentifier);
         });
         if (model != null)
-            ctx.fallbackConsumer().accept(model);
+            model.emitItemQuads(itemStack, supplier, ctx);
     }
 
     @Override
@@ -87,9 +88,10 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
     @Override
     public ModelTransformation getTransformation() {
         if (DEFAULT_TRANSFORM == null) {
-            return MinecraftClient.getInstance()
+            BakedModel model = MinecraftClient.getInstance()
                     .getBakedModelManager()
-                    .getModel(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"))
+                    .getModel(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"));
+            return model
                     .getTransformation();
         }
         return DEFAULT_TRANSFORM;
@@ -106,13 +108,13 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
     }
 
     @Override
-    public Collection<SpriteIdentifier> getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences) {
-        return Collections.emptyList();
+    public void setParents(Function<Identifier, UnbakedModel> modelLoader) {
+
     }
 
     @Nullable
     @Override
-    public BakedModel bake(ModelLoader loader, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
+    public BakedModel bake(Baker baker, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings rotationContainer, Identifier modelId) {
         return this;
     }
 }

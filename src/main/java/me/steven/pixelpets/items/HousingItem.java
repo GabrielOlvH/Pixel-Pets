@@ -1,12 +1,9 @@
 package me.steven.pixelpets.items;
 
 import me.steven.pixelpets.PixelPetsMod;
-import me.steven.pixelpets.abilities.Abilities;
-import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.housing.HousingData;
 import me.steven.pixelpets.housing.HousingTooltipData;
 import me.steven.pixelpets.pets.PetData;
-import me.steven.pixelpets.pets.PixelPet;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -16,17 +13,14 @@ import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ClickType;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class HousingItem extends Item {
 
@@ -50,8 +44,8 @@ public class HousingItem extends Item {
             List<PetData> eggs = housingData.getEggs();
             if (!eggs.isEmpty()) {
                 PetData petData = eggs.remove(0);
-                ItemStack eggStack = new ItemStack(PixelPetsMod.EGG_ITEM);
-                eggStack.setSubNbt("PetData", petData.toTag());
+                ItemStack eggStack = new ItemStack(PixelPetsMod.OVERWORLD_EGG_ITEM);
+                eggStack.setSubNbt(PetData.PET_DATA_ID, petData.toTag());
                 stack.setSubNbt("HousingData", housingData.toNbt());
                 cursorStackReference.set(eggStack);
             } else {
@@ -59,7 +53,7 @@ public class HousingItem extends Item {
                 if (storedPets.isEmpty()) return false;
                 PetData petData = storedPets.remove(0);
                 ItemStack petStack = new ItemStack(PixelPetsMod.PET_ITEM);
-                petStack.setSubNbt("PetData", petData.toTag());
+                petStack.setSubNbt(PetData.PET_DATA_ID, petData.toTag());
                 stack.setSubNbt("HousingData", housingData.toNbt());
                 cursorStackReference.set(petStack);
             }
@@ -84,21 +78,21 @@ public class HousingItem extends Item {
     public Text getName(ItemStack stack) {
         HousingData housingData = HousingData.fromTag(stack);
         Identifier id = housingData.getId();
-        return new TranslatableText("item." + id.getNamespace() + ".housing." + id.getPath()).setStyle(Style.EMPTY.withColor(housingData.getHousing().color()));
+        return Text.translatable("item." + id.getNamespace() + ".housing." + id.getPath()).setStyle(Style.EMPTY.withColor(housingData.getHousing().color()));
     }
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         HousingData housingData = HousingData.fromTag(stack);
         if (housingData.getStoredPets().isEmpty() && !Screen.hasShiftDown()) {
-            tooltip.add(new LiteralText("No pets inside!"));
+            tooltip.add(Text.literal("No pets inside!"));
         } else {
             if (!Screen.hasShiftDown()) {
-                tooltip.add(new LiteralText(housingData.getStoredPets().size() + " pets inside!"));
-                tooltip.add(LiteralText.EMPTY);
-                tooltip.add(new LiteralText("Press Shift to see more."));
+                tooltip.add(Text.literal(housingData.getStoredPets().size() + " pets inside!"));
+                tooltip.add(Text.empty());
+                tooltip.add(Text.literal("Press Shift to see more."));
             }
-            tooltip.add(new LiteralText("Press Right Click to pick them up."));
+            tooltip.add(Text.literal("Press Right Click to pick them up."));
         }
     }
 
@@ -144,9 +138,8 @@ public class HousingItem extends Item {
         int breedingProgress = stack.getOrCreateNbt().getInt("BreedingProgress") + 1;
         stack.getNbt().putInt("BreedingProgress", breedingProgress);
 
-        if (breedingProgress == 12000) {
+        if (breedingProgress >= 12000) {
             PetData babyData = new PetData(first.getPetId());
-            decideAbilities(first, second, world.random, babyData.getAbilities());
 
             first.setCooldown(1200);
             first.setTotalCooldown(1200);
@@ -155,39 +148,6 @@ public class HousingItem extends Item {
             stack.getNbt().remove("BreedingProgress");
             housingData.getEggs().add(babyData);
             stack.setSubNbt("HousingData", housingData.toNbt());
-        }
-    }
-
-    private static void decideAbilities(PetData first, PetData second, Random random, Map<Identifier, Integer> abilities) {
-        first.getAbilities().forEach((ability, level) -> {
-            if (second.getAbilities().containsKey(ability)) {
-                int secondLevel = second.getAbilities().get(ability);
-                Ability a = Abilities.REGISTRY.get(ability);
-                int babyLevel = level;
-
-                if (secondLevel != level)
-                    babyLevel = Math.min(level, secondLevel);
-                else if (random.nextFloat() <= 0.5)
-                    babyLevel = level + 1;
-
-                if (a != null && babyLevel < a.actions().length) {
-                    abilities.put(ability, babyLevel);
-                } else {
-                    PixelPet pet = first.getPet();
-                    int i = Arrays.stream(pet.getAbilities()).toList().indexOf(a);
-                    if (i + 1 < pet.getAbilities().length && random.nextFloat() <= 0.5) {
-                        abilities.put(pet.getAbilities()[i + 1].id(), 0);
-                    }
-                }
-            }
-        });
-
-        if (abilities.isEmpty()) {// that means both parents have no abilities in common
-            PetData inheritFrom = first;
-            if (random.nextFloat() > 0.5) inheritFrom = second;
-            List<Map.Entry<Identifier, Integer>> entries = inheritFrom.getAbilities().entrySet().stream().toList();
-            Map.Entry<Identifier, Integer> entry = entries.get(random.nextInt(abilities.size()));
-            abilities.put(entry.getKey(), entry.getValue());
         }
     }
 }

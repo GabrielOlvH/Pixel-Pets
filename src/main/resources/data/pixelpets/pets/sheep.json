@@ -1,5 +1,6 @@
 {
   "id": "pixelpets:sheep",
+  "eggGroup": "pixelpets:overworld",
   "color": "0xf0f0f0",
   "variants": [
     {
