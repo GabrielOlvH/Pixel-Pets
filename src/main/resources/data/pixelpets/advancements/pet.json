@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pet": {
+      "conditions": {
+        "items": [
+          {
+            "items":[ "pixelpets:pet"]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.pixelpets.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "pixelpets:pet"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.pixelpets.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_pet"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pixelpets:pet"
+    ]
+  },
+  "sends_telemetry_event": false
+}

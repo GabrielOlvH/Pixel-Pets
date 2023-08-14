@@ -1,5 +1,6 @@
 {
   "id": "pixelpets:poseidons_gift",
+  "source": "reroll",
   "action": {
     "passiveEffect": {
       "id": "minecraft:water_breathing",

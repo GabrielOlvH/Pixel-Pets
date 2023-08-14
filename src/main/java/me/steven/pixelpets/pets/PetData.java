@@ -18,6 +18,7 @@ public class PetData {
     private Identifier abilityId;
     private int cooldown;
     private int totalCooldown;
+    private boolean rerolledAbility;
 
     public PetData(Identifier id) {
         this.petId = id;
@@ -75,6 +76,14 @@ public class PetData {
         return variant;
     }
 
+    public boolean hasRerolledAbility() {
+        return rerolledAbility;
+    }
+
+    public void setRerolledAbility(boolean rerolledAbility) {
+        this.rerolledAbility = rerolledAbility;
+    }
+
     public void setVariant(int variant) {
         this.variant = variant;
     }
@@ -98,6 +107,7 @@ public class PetData {
         NbtCompound tag = new NbtCompound();
         tag.putString("PetId", petId.toString());
         tag.putString("Nickname", nickname);
+        tag.putBoolean("Rerolled", rerolledAbility);
         if (abilityId != null)
             tag.putString("AbilityId", abilityId.toString());
         tag.putInt("Cooldown", cooldown);
@@ -116,6 +126,7 @@ public class PetData {
             return data;
         data.petId = new Identifier(tag.getString("PetId"));
         data.nickname = tag.getString("Nickname");
+        data.rerolledAbility = tag.getBoolean("Rerolled");
         if (tag.contains("AbilityId"))
             data.abilityId = new Identifier(tag.getString("AbilityId"));
         data.cooldown = tag.getInt("Cooldown");

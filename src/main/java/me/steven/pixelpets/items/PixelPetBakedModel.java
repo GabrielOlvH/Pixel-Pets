@@ -3,10 +3,12 @@ package me.steven.pixelpets.items;
 import com.mojang.datafixers.util.Pair;
 import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.pets.PetData;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.model.*;
 import net.minecraft.client.render.model.json.ModelOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
@@ -51,6 +53,7 @@ public class PixelPetBakedModel implements UnbakedModel, BakedModel, FabricBaked
             ModelIdentifier modelIdentifier = new ModelIdentifier(new Identifier(modelId.getNamespace(), modelId.getPath()), "inventory");
             return MinecraftClient.getInstance().getBakedModelManager().getModel(modelIdentifier);
         });
+
         if (model != null)
             model.emitItemQuads(itemStack, supplier, ctx);
     }

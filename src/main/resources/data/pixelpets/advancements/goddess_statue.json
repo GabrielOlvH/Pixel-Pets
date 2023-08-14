@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_statue": {
+      "conditions": {
+        "items": [
+          {
+            "items":[ "pixelpets:ability_reroll"]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.goddess_statue.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "pixelpets:ability_reroll"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.goddess_statue.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_statue"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "pixelpets:goddess_statue"
+    ]
+  },
+  "sends_telemetry_event": false
+}

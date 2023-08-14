@@ -1,5 +1,6 @@
 {
   "id": "pixelpets:atropos_gift",
+  "source": "reroll",
   "action": {
     "cooldown": 6000,
     "onDamage": {

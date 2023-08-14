@@ -43,10 +43,10 @@ public class Abilities {
                 }
                 return false;
             }
-        });
+        }, AbilitySource.REROLL);
     }
 
-    private static void create(Identifier id, AbilityAction action) {
-        REGISTRY.put(id, new Ability(id, action));
+    private static void create(Identifier id, AbilityAction action, AbilitySource source) {
+        REGISTRY.put(id, new Ability(id, action, source));
     }
 }

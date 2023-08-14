@@ -2,6 +2,7 @@ package me.steven.pixelpets.items;
 
 import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.pets.PetData;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -11,6 +12,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PixelPetEggItem extends Item {
     public static final String HATCH_TICKS = "Hatching";
@@ -27,6 +31,11 @@ public class PixelPetEggItem extends Item {
     @Override
     public Text getName(ItemStack stack) {
         return super.getName().copy().styled(s -> s.withColor(color));
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        tooltip.add(Text.translatable("item."+ eggGroupId.getNamespace() + "." + eggGroupId.getPath() + "_egg.description").formatted(Formatting.GRAY));
     }
 
     @Override

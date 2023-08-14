@@ -1,11 +1,17 @@
 {
   "item.pixelpets.overworld_egg": "Pixel Pet Overworld Egg",
+  "item.pixelpets.overworld_egg.description": "Walk around to hatch it!",
   "item.pixelpets.nether_egg": "Pixel Pet Nether Egg",
   "item.pixelpets.the_end_egg": "Pixel Pet The End Egg",
   "item.pixelpets.pet": "Empty Pet",
   "item.pixelpets.pet.ability": "Ability: %s",
+  "item.pixelpets.pet.ability.rerolled": "Ability: %s (Blessed)",
   "item.pixelpets.pet.cooldown": "Cooldown: %s",
   "item.pixelpets.housing.aquarium": "Aquarium",
+  "item.pixelpets.ability_reroll": "Goddess Statue",
+  "item.pixelpets.ability_reroll.tooltip1": "This strange statue is able to bless pets",
+  "item.pixelpets.ability_reroll.tooltip2": "Using it will reroll a pet's ability once",
+  "item.pixelpets.pet_item.tooltip.shift": "Press SHIFT to see more",
   "pet.pixelpets.pig": "Pig",
   "pet.pixelpets.cow": "Cow",
   "pet.pixelpets.cow.mushroom": "Mushroom Cow",
@@ -43,5 +49,9 @@
   "ability.pixelpets.scare_creepers.usage": "When in inventory, Creepers will avoid you.",
   "ability.pixelpets.builtin/sleep": "Mimir",
   "ability.pixelpets.builtin/sleep.description": "so so very tired... zz",
-  "ability.pixelpets.builtin/sleep.usage": "When used, you can sleep anywhere."
+  "ability.pixelpets.builtin/sleep.usage": "When used, you can sleep anywhere.",
+  "advancements.goddess_statue.title": "Blessed",
+  "advancements.goddess_statue.description": "Get a Goddess Statue",
+  "advancements.pixelpets.title": "Pocket-sized Pals",
+  "advancements.pixelpets.description": "Get a Pixel Pet!"
 }

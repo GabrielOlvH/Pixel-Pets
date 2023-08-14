@@ -2,6 +2,7 @@ package me.steven.pixelpets;
 
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.commands.PixelPetsCommands;
+import me.steven.pixelpets.items.AbilityRerollItem;
 import me.steven.pixelpets.items.HousingItem;
 import me.steven.pixelpets.items.PixelPetEggItem;
 import me.steven.pixelpets.items.PixelPetItem;
@@ -38,6 +39,8 @@ public class PixelPetsMod implements ModInitializer {
             Registry.register(Registries.ITEM, new Identifier(MOD_ID, "pet"), new PixelPetItem(new Item.Settings().maxCount(1)));
     public static final Item OVERWORLD_EGG_ITEM =
             Registry.register(Registries.ITEM, new Identifier(MOD_ID, "overworld_egg"), new PixelPetEggItem(new Identifier(MOD_ID, "overworld"), 0x33cc33));
+    public static final Item ABILITY_REROLL_ITEM =
+            Registry.register(Registries.ITEM, new Identifier(MOD_ID, "ability_reroll"), new AbilityRerollItem());
 
  /*   public static final Item NETHER_EGG_ITEM =
             Registry.register(Registries.ITEM, new Identifier(MOD_ID, "nether_egg"), new PixelPetEggItem(new Identifier(MOD_ID, "nether"), 0xcc0000));
@@ -59,15 +62,29 @@ public class PixelPetsMod implements ModInitializer {
         });*/
 
 
-        List<Identifier> ids = Arrays.asList(LootTables.ANCIENT_CITY_CHEST,
+        List<Identifier> eggIds = Arrays.asList(
+                LootTables.ANCIENT_CITY_CHEST,
                 LootTables.ABANDONED_MINESHAFT_CHEST,
                 LootTables.BURIED_TREASURE_CHEST,
-                LootTables.SHIPWRECK_TREASURE_CHEST);
+                LootTables.SHIPWRECK_TREASURE_CHEST
+        );
+
+
+        List<Identifier> abilityRerollIds = Arrays.asList(
+                LootTables.HERO_OF_THE_VILLAGE_FARMER_GIFT_GAMEPLAY,
+                LootTables.HERO_OF_THE_VILLAGE_LIBRARIAN_GIFT_GAMEPLAY,
+                LootTables.HERO_OF_THE_VILLAGE_SHEPHERD_GIFT_GAMEPLAY
+        );
+
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-            if (source.isBuiltin() && ids.contains(id)) {
+            if (eggIds.contains(id)) {
                 tableBuilder.modifyPools(pool -> pool.with(ItemEntry.builder(OVERWORLD_EGG_ITEM).weight(1)));
             }
+            if (abilityRerollIds.contains(id)) {
+                tableBuilder.modifyPools(pool -> pool.with(ItemEntry.builder(ABILITY_REROLL_ITEM).weight(1)));
+            }
         });
+
 
         PixelPetsCommands.register();
     }

@@ -5,10 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.unimi.dsi.fastutil.Function;
 import me.steven.pixelpets.PixelPetsMod;
-import me.steven.pixelpets.abilities.Abilities;
-import me.steven.pixelpets.abilities.Ability;
-import me.steven.pixelpets.abilities.AbilityAction;
-import me.steven.pixelpets.abilities.AbilityContext;
+import me.steven.pixelpets.abilities.*;
 import me.steven.pixelpets.pets.PetData;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.entity.EntityType;
@@ -59,6 +56,7 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
                 Multimap<EntityAttribute, EntityAttributeModifier> attributes = EntityAttributeParser.parse(action.get("attributes"));
                 Optional<Function<EntityType<?>, Boolean>> repels = AbilityParser.parseEntityType(action.get("repels"));
                 Optional<Supplier<StatusEffectInstance>> passiveEffect = action.has("passiveEffect") ? AbilityParser.parseStatusEffect(action.getAsJsonObject("passiveEffect")) : Optional.empty();
+                AbilitySource source = result.has("source") ? AbilitySource.valueOf(result.get("source").getAsString().toUpperCase()) : AbilitySource.NATURAL;
                 AbilityAction a = new AbilityAction() {
 
                     @Override
@@ -98,7 +96,7 @@ public class AbilityResourceReloadListener implements SimpleSynchronousResourceR
 
                     ;
                 };
-                Ability ability = new Ability(id, a);
+                Ability ability = new Ability(id, a, source);
 
                 Abilities.REGISTRY.put(id, ability);
             } catch (Exception e) {

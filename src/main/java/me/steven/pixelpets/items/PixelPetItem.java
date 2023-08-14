@@ -1,26 +1,31 @@
 package me.steven.pixelpets.items;
 
+import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.abilities.Abilities;
 import me.steven.pixelpets.abilities.Ability;
 import me.steven.pixelpets.abilities.AbilityAction;
+import me.steven.pixelpets.abilities.AbilitySource;
 import me.steven.pixelpets.extensions.PixelPetsPlayerExtension;
 import me.steven.pixelpets.pets.PetData;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,7 +40,9 @@ public class PixelPetItem extends Item {
         PetData data = PetData.fromTag(stack);
         if (data.getAbilityId() != null) {
             Ability ability = Abilities.REGISTRY.get(data.getAbilityId());
-            tooltip.add(Text.translatable("item.pixelpets.pet.ability", Text.translatable(ability.getTranslationKey().formatted(Formatting.WHITE)).formatted(Formatting.DARK_PURPLE)));
+            String key = "item.pixelpets.pet.ability";
+            if (data.hasRerolledAbility()) key += ".rerolled";
+            tooltip.add(Text.translatable(key, Text.translatable(ability.getTranslationKey().formatted(Formatting.WHITE)).formatted(Formatting.DARK_PURPLE)));
             if (Screen.hasShiftDown()) {
                 tooltip.add(Text.translatable(ability.getTranslationKey() + ".usage").formatted(Formatting.GRAY));
                 if (data.getCooldown() > 0) {
@@ -45,7 +52,7 @@ public class PixelPetItem extends Item {
             }
             else {
                 tooltip.add(Text.translatable(ability.getTranslationKey() + ".description").formatted(Formatting.YELLOW, Formatting.ITALIC));
-                tooltip.add(Text.literal("Press SHIFT to see more").formatted(Formatting.GRAY));
+                tooltip.add(Text.translatable("item.pixelpets.pet_item.tooltip.shift").formatted(Formatting.GRAY));
             }
         }
     }
@@ -99,16 +106,30 @@ public class PixelPetItem extends Item {
         return data.getPet().getColor(data.getVariant());
     }
 
+    @Override
+    public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
+        PetData data = PetData.fromTag(stack);
+        if (!data.hasRerolledAbility() && otherStack.isOf(PixelPetsMod.ABILITY_REROLL_ITEM)) {
+
+            if (!player.getWorld().isClient) {
+                data.setRerolledAbility(true);
+                data.setAbilityId(null);
+                data.update(stack);
+                if (!player.isCreative()) otherStack.decrement(1);
+                player.sendMessage(Text.literal(data.getNickname()).styled(s -> s.withColor(data.getPet().getColor(data.getVariant()))).append(Text.literal(" has learned a new ability!").formatted(Formatting.WHITE)));
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static boolean tick(PetData data, @Nullable ItemStack stack, World world, Entity entity) {
         if (world.isClient()) return false;
         if (data.getAbilityId() == null) {
             List<Identifier> abilities = new ArrayList<>();
 
-            for (int i = 0; i < data.getPet().getAbilities().length; i++) {
-                int times = data.getPet().getAbilities().length - i;
-                for (int j = 0; j < times; j++) {
-                    abilities.add(data.getPet().getAbilities()[i].id());
-                }
+            for (Ability ability : data.getPet().getAbilities()) {
+                if (ability.source() == AbilitySource.NATURAL || data.hasRerolledAbility()) abilities.add(ability.id());
             }
 
             Identifier ability = abilities.get(world.random.nextInt(abilities.size()));

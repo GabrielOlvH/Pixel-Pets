@@ -1,5 +1,6 @@
 {
   "id": "pixelpets:lachesis_gift",
+  "source": "reroll",
   "action": {
     "attributes": {
       "uuid": "24fd6d36-496d-11eb-b378-0242ac130002",
