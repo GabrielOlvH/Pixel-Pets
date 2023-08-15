@@ -53,6 +53,15 @@ public class HousingBakedModel implements UnbakedModel, BakedModel, FabricBakedM
         if (model != null)
             model.emitItemQuads(itemStack, supplier, ctx);
 
+        if (itemStack.getNbt() != null && itemStack.getNbt().contains("BreedingProgress")) {
+            Identifier m = new Identifier(PixelPetsMod.MOD_ID, "heart_anim");
+            BakedModel loveModel = models.computeIfAbsent(m, (i) -> {
+                ModelIdentifier modelIdentifier = new ModelIdentifier(new Identifier(m.getNamespace(), m.getPath()), "inventory");
+                return MinecraftClient.getInstance().getBakedModelManager().getModel(modelIdentifier);
+            });
+            if (loveModel != null)
+                loveModel.emitItemQuads(itemStack, supplier, ctx);
+        }
     }
 
     @Override

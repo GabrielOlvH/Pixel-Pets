@@ -28,6 +28,7 @@ public class PixelPetsModClient implements ClientModInitializer {
         ModelLoadingPlugin.register(ctx -> {
             ResourceManager manager = MinecraftClient.getInstance().getResourceManager();
             Collection<Identifier> pets = manager.findResources("models/item/pets", (r) -> r.toString().endsWith(".json")).keySet();
+            ctx.addModels(new ModelIdentifier(new Identifier("pixelpets:heart_anim"), "inventory"));
             ctx.addModels(new ModelIdentifier(new Identifier("pixelpets:pet_base"), "inventory"));
             for (Identifier fileId : pets) {
                 ModelIdentifier id = new ModelIdentifier(new Identifier(fileId.toString().replace("models/item/", "").replace(".json", "")), "inventory");

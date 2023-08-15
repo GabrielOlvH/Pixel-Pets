@@ -4,6 +4,7 @@ import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.housing.HousingData;
 import me.steven.pixelpets.housing.HousingTooltipData;
 import me.steven.pixelpets.pets.PetData;
+import me.steven.pixelpets.utils.Config;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.item.TooltipData;
@@ -12,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -109,6 +111,7 @@ public class HousingItem extends Item {
     }
 
     private static void tick(ItemStack stack, World world, Entity entity) {
+
         HousingData housingData = HousingData.fromTag(stack);
         for (PetData petData : housingData.getStoredPets()) {
             PixelPetItem.tick(petData, null, world, entity);
@@ -129,25 +132,28 @@ public class HousingItem extends Item {
         PetData first = storedPets.get(0);
         PetData second = storedPets.get(1);
 
-        if (first.getCooldown() > 0 || second.getCooldown() > 0) {
+        if (first.getCooldown() > 0 || second.getCooldown() > 0 || !first.getPetId().equals(second.getPetId())) {
             stack.removeSubNbt("BreedingProgress");
             return;
         }
 
-        if (!first.getPetId().equals(second.getPetId())) return;
-        int breedingProgress = stack.getOrCreateNbt().getInt("BreedingProgress") + 1;
-        stack.getNbt().putInt("BreedingProgress", breedingProgress);
+        if (entity.getVelocity().x == 0 && entity.getVelocity().z == 0) return;
 
-        if (breedingProgress >= 12000) {
+        NbtCompound nbt = stack.getOrCreateNbt();
+        int breedingProgress = nbt.getInt("BreedingProgress") + 1;
+        nbt.putInt("BreedingProgress", breedingProgress);
+
+        if (breedingProgress >= Config.INSTANCE.breedingTicks) {
             PetData babyData = new PetData(first.getPetId());
 
             first.setCooldown(1200);
             first.setTotalCooldown(1200);
             second.setCooldown(1200);
             second.setTotalCooldown(1200);
-            stack.getNbt().remove("BreedingProgress");
+            nbt.remove("BreedingProgress");
             housingData.getEggs().add(babyData);
             stack.setSubNbt("HousingData", housingData.toNbt());
+            entity.sendMessage(Text.literal("An egg has been laid in ").append(stack.getName()));
         }
     }
 }

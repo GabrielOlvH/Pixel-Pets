@@ -2,6 +2,7 @@ package me.steven.pixelpets.items;
 
 import me.steven.pixelpets.PixelPetsMod;
 import me.steven.pixelpets.pets.PetData;
+import me.steven.pixelpets.utils.Config;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class PixelPetEggItem extends Item {
     public static final String HATCH_TICKS = "Hatching";
-    public static final int TOTAL_HATCH_TIME = 120;
+    public static final int TOTAL_HATCH_TIME = Config.INSTANCE.hatchingTicks;
 
     private final Identifier eggGroupId;
     private final int color;

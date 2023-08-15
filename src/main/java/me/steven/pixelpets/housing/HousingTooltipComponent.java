@@ -52,7 +52,7 @@ public record HousingTooltipComponent(HousingTooltipData data) implements Toolti
 
         for (PetData petData : data.housingData().getEggs()) {
             ItemStack stack = new ItemStack(PixelPetsMod.OVERWORLD_EGG_ITEM);
-            context.drawItemInSlot(textRenderer, stack, x, y + i * 18);
+            context.drawItem(stack, x, y + i * 18);
             i++;
         }
     }
